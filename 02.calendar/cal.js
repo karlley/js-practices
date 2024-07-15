@@ -2,6 +2,9 @@
 import minimist from "minimist";
 import { DateTime } from "luxon";
 
+const SATURDAY = 6;
+const SUNDAY = 7;
+
 function getYearAndMonth() {
   const currentDate = DateTime.now();
   const args = minimist(process.argv.slice(2), {
@@ -14,7 +17,7 @@ function getYearAndMonth() {
   return { year, month };
 }
 
-function generateDatesForMonth({ year, month }) {
+function generateDates({ year, month }) {
   const lastDayOfMonth = DateTime.local(year, month).endOf("month").day;
   return Array.from({ length: lastDayOfMonth }, (_, index) =>
     DateTime.local(year, month, index + 1),
@@ -22,27 +25,42 @@ function generateDatesForMonth({ year, month }) {
 }
 
 function isSaturday(date) {
-  return date.weekday === 6;
+  return date.weekday === SATURDAY;
+}
+
+function isSunday(date) {
+  return date.weekday === SUNDAY;
+}
+
+function isLastDay(date, dates) {
+  return date.day === dates.length;
+}
+
+function shift(date) {
+  return date.day === 1 && !isSunday(date) ? " ".repeat(date.weekday * 3) : "";
+}
+
+function newLineOrSpace(date, dates) {
+  const separator = isSaturday(date) ? "\n" : " ";
+  return isLastDay(date, dates) ? "\n\n" : separator;
 }
 
 function printCalendar(dates, { year, month }) {
   console.log(`      ${month}月 ${year}年`);
   console.log("日 月 火 水 木 金 土");
 
-  process.stdout.write(" ".repeat(dates[0].weekday * 3));
   dates.forEach((date) => {
-    process.stdout.write(date.day.toString().padStart(2, " "));
-    process.stdout.write(isSaturday(date) ? "\n" : " ");
+    process.stdout.write(
+      shift(date) +
+        date.day.toString().padStart(2, " ") +
+        newLineOrSpace(date, dates),
+    );
   });
-  process.stdout.write("\n");
-  if (!isSaturday(dates[dates.length - 1])) {
-    process.stdout.write("\n");
-  }
 }
 
 function main() {
   const yearAndMonth = getYearAndMonth();
-  const dates = generateDatesForMonth(yearAndMonth);
+  const dates = generateDates(yearAndMonth);
   printCalendar(dates, yearAndMonth);
 }
 
