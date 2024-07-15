@@ -46,7 +46,7 @@ function newLineOrSpace(date, dates) {
 }
 
 function printCalendar(dates, { year, month }) {
-  console.log(`      ${month}月 ${year}年`);
+  console.log(`      ${month}月 ${year}`);
   console.log("日 月 火 水 木 金 土");
 
   dates.forEach((date) => {
