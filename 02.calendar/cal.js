@@ -17,8 +17,12 @@ function getYearAndMonth() {
   return { year, month };
 }
 
+function getLastDayOfMonth(year, month) {
+  return DateTime.local(year, month).endOf("month").day;
+}
+
 function generateDates({ year, month }) {
-  const lastDayOfMonth = DateTime.local(year, month).endOf("month").day;
+  const lastDayOfMonth = getLastDayOfMonth(year, month);
   return Array.from({ length: lastDayOfMonth }, (_, index) =>
     DateTime.local(year, month, index + 1),
   );
@@ -32,17 +36,17 @@ function isSunday(date) {
   return date.weekday === SUNDAY;
 }
 
-function isLastDay(date, dates) {
-  return date.day === dates.length;
+function isLastDay(date) {
+  return date.day === getLastDayOfMonth(date.year, date.month);
 }
 
 function shift(date) {
   return date.day === 1 && !isSunday(date) ? " ".repeat(date.weekday * 3) : "";
 }
 
-function newLineOrSpace(date, dates) {
+function newLineOrSpace(date) {
   const separator = isSaturday(date) ? "\n" : " ";
-  return isLastDay(date, dates) ? "\n\n" : separator;
+  return isLastDay(date) ? "\n\n" : separator;
 }
 
 function printCalendar(dates, { year, month }) {
@@ -51,9 +55,7 @@ function printCalendar(dates, { year, month }) {
 
   dates.forEach((date) => {
     process.stdout.write(
-      shift(date) +
-        date.day.toString().padStart(2, " ") +
-        newLineOrSpace(date, dates),
+      shift(date) + date.day.toString().padStart(2, " ") + newLineOrSpace(date),
     );
   });
 }
