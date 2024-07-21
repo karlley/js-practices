@@ -40,8 +40,8 @@ function isLastDay(date) {
   return date.day === getLastDayOfMonth(date.year, date.month);
 }
 
-function shift(date) {
-  return date.day === 1 && !isSunday(date) ? " ".repeat(date.weekday * 3) : "";
+function firstDayOffset(date) {
+  return !isSunday(date) ? " ".repeat(date.weekday * 3) : "";
 }
 
 function newLineOrSpace(date) {
@@ -53,9 +53,10 @@ function printCalendar(dates, { year, month }) {
   console.log(`      ${month}月 ${year}`);
   console.log("日 月 火 水 木 金 土");
 
+  process.stdout.write(firstDayOffset(dates[0]));
   dates.forEach((date) => {
     process.stdout.write(
-      shift(date) + date.day.toString().padStart(2, " ") + newLineOrSpace(date),
+      date.day.toString().padStart(2, " ") + newLineOrSpace(date),
     );
   });
 }
