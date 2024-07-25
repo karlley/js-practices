@@ -1,7 +1,16 @@
 #!/usr/bin/env node
 import fs from "fs";
+import { Command } from "commander";
 
-const input = process.argv[2];
+function getArgsAndOptions() {
+  const program = new Command();
+  program.option("-l");
+  program.parse(process.argv);
+  program.arguments("[input]");
+  const options = program.opts();
+  const args = program.args;
+  return { args, options };
+}
 
 function getMemos() {
   try {
@@ -23,13 +32,20 @@ function addMemo(input) {
   }
 }
 
-function main() {
-  if (input) {
-    addMemo(input);
-  }
-  const memos = getMemos();
+function displayMemoTitles(memos) {
   const memoTitles = memos.map((memo) => memo.body.split("\n")[0]);
   memoTitles.forEach((title) => console.log(title));
+}
+
+function main() {
+  const { args, options } = getArgsAndOptions();
+  const memos = getMemos();
+  if (options.l) {
+    displayMemoTitles(memos);
+  }
+  if (args[0]) {
+    addMemo(args[0]);
+  }
 }
 
 main();
