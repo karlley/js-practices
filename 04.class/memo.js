@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from "fs";
 import { Command } from "commander";
+import readline from "readline";
 
 function getArgsAndOptions() {
   const program = new Command();
@@ -20,16 +21,26 @@ function getMemos() {
   }
 }
 
-function addMemo(input) {
-  const memos = getMemos();
-  const newMemo = { body: input };
-  memos.push(newMemo);
+function addMemo(memos) {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
 
-  try {
-    fs.writeFileSync("db.json", JSON.stringify(memos, null, 4), "utf-8");
-  } catch (err) {
-    console.log(err);
-  }
+  const memo = { body: "" };
+
+  rl.on("line", (line) => {
+    memo.body += `${line}\n`;
+  });
+
+  rl.on("close", () => {
+    memos.push(memo);
+    try {
+      fs.writeFileSync("db.json", JSON.stringify(memos, null, 4), "utf-8");
+    } catch (err) {
+      console.log(err);
+    }
+  });
 }
 
 function displayMemoTitles(memos) {
@@ -42,9 +53,8 @@ function main() {
   const memos = getMemos();
   if (options.l) {
     displayMemoTitles(memos);
-  }
-  if (args[0]) {
-    addMemo(args[0]);
+  } else if (args.length === 0) {
+    addMemo(memos);
   }
 }
 
