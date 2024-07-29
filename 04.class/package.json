@@ -12,6 +12,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@inquirer/prompts": "^5.3.4",
     "commander": "^12.1.0"
   }
 }

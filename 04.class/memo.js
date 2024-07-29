@@ -2,10 +2,12 @@
 import fs from "fs";
 import { Command } from "commander";
 import readline from "readline";
+import { select } from "@inquirer/prompts";
 
 function getArgsAndOptions() {
   const program = new Command();
   program.option("-l");
+  program.option("-r");
   program.parse(process.argv);
   program.arguments("[input]");
   const options = program.opts();
@@ -48,11 +50,29 @@ function displayMemoTitles(memos) {
   memoTitles.forEach((title) => console.log(title));
 }
 
+async function showMemo(memos) {
+  const memoTitles = memos.map((memo) => memo.body.split("\n")[0]);
+  const memoChoices = memoTitles.map((memoTitle, index) => {
+    return {
+      name: memoTitle,
+      value: index,
+    };
+  });
+  const selectedMemoIndex = await select({
+    type: "list",
+    message: "Select a Memo.",
+    choices: memoChoices,
+  });
+  console.log(memos[selectedMemoIndex].body);
+}
+
 function main() {
   const { args, options } = getArgsAndOptions();
   const memos = getMemos();
   if (options.l) {
     displayMemoTitles(memos);
+  } else if (options.r) {
+    showMemo(memos);
   } else if (args.length === 0) {
     addMemo(memos);
   }
