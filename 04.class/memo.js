@@ -45,13 +45,17 @@ function addMemo(memos) {
   });
 }
 
+function getMemoTitles(memos) {
+  return memos.map((memo) => memo.body.split("\n")[0]);
+}
+
 function displayMemoTitles(memos) {
-  const memoTitles = memos.map((memo) => memo.body.split("\n")[0]);
+  const memoTitles = getMemoTitles(memos);
   memoTitles.forEach((title) => console.log(title));
 }
 
 async function showMemo(memos) {
-  const memoTitles = memos.map((memo) => memo.body.split("\n")[0]);
+  const memoTitles = getMemoTitles(memos);
   const memoChoices = memoTitles.map((memoTitle, index) => {
     return {
       name: memoTitle,
