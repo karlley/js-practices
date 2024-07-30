@@ -8,6 +8,7 @@ function getArgsAndOptions() {
   const program = new Command();
   program.option("-l");
   program.option("-r");
+  program.option("-d");
   program.parse(process.argv);
   program.arguments("[input]");
   const options = program.opts();
@@ -64,10 +65,32 @@ async function showMemo(memos) {
   });
   const selectedMemoIndex = await select({
     type: "list",
-    message: "Select a Memo.",
+    message: "Show Memo:",
     choices: memoChoices,
   });
   console.log(memos[selectedMemoIndex].body);
+}
+
+async function deleteMemo(memos) {
+  const memoTitles = getMemoTitles(memos);
+  const memoChoices = memoTitles.map((memoTitle, index) => {
+    return {
+      name: memoTitle,
+      value: index,
+    };
+  });
+  const selectedMemoIndex = await select({
+    type: "list",
+    message: "Delete Memo:",
+    choices: memoChoices,
+  });
+  const deletedMemos = memos.filter((_, index) => index !== selectedMemoIndex);
+  try {
+    fs.writeFileSync("db.json", JSON.stringify(deletedMemos, null, 4), "utf-8");
+    console.log(`Memo deleted.`);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 function main() {
@@ -77,6 +100,8 @@ function main() {
     displayMemoTitles(memos);
   } else if (options.r) {
     showMemo(memos);
+  } else if (options.d) {
+    deleteMemo(memos);
   } else if (args.length === 0) {
     addMemo(memos);
   }
