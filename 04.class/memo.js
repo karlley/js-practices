@@ -24,86 +24,90 @@ function getMemos() {
   }
 }
 
-function addMemo(memos) {
+function saveFile(filename, memos) {
+  try {
+    fs.writeFileSync(filename, JSON.stringify(memos, null, 4), "utf-8");
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+function add(memos) {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
 
-  const memo = { body: "" };
+  const newMemo = { body: "" };
 
   rl.on("line", (line) => {
-    memo.body += `${line}\n`;
+    newMemo.body += `${line}\n`;
   });
 
   rl.on("close", () => {
-    memos.push(memo);
-    try {
-      fs.writeFileSync("db.json", JSON.stringify(memos, null, 4), "utf-8");
-    } catch (err) {
-      console.log(err);
-    }
+    memos.push(newMemo);
+    saveFile("db.json", memos);
+    console.log("Memo added.");
   });
 }
 
-function getMemoTitles(memos) {
+function getTitles(memos) {
   return memos.map((memo) => memo.body.split("\n")[0]);
 }
 
-function displayMemoTitles(memos) {
-  const memoTitles = getMemoTitles(memos);
-  memoTitles.forEach((title) => console.log(title));
+function listTitles(memos) {
+  const titles = getTitles(memos);
+  titles.forEach((title) => console.log(title));
 }
 
-async function showMemo(memos) {
-  const memoTitles = getMemoTitles(memos);
-  const memoChoices = memoTitles.map((memoTitle, index) => {
+async function getSelectedIndex(memos) {
+  const titles = getTitles(memos);
+  const memoChoices = titles.map((title, index) => {
     return {
-      name: memoTitle,
+      name: title,
       value: index,
     };
   });
-  const selectedMemoIndex = await select({
+  return select({
     type: "list",
-    message: "Show Memo:",
+    message: "Select a Memo.",
     choices: memoChoices,
   });
-  console.log(memos[selectedMemoIndex].body);
 }
 
-async function deleteMemo(memos) {
-  const memoTitles = getMemoTitles(memos);
-  const memoChoices = memoTitles.map((memoTitle, index) => {
-    return {
-      name: memoTitle,
-      value: index,
-    };
-  });
-  const selectedMemoIndex = await select({
-    type: "list",
-    message: "Delete Memo:",
-    choices: memoChoices,
-  });
-  const deletedMemos = memos.filter((_, index) => index !== selectedMemoIndex);
-  try {
-    fs.writeFileSync("db.json", JSON.stringify(deletedMemos, null, 4), "utf-8");
-    console.log(`Memo deleted.`);
-  } catch (err) {
-    console.log(err);
-  }
+function showDetail(memos) {
+  getSelectedIndex(memos)
+    .then((selectedIndex) => {
+      console.log(memos[selectedIndex].body);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+function remove(memos) {
+  getSelectedIndex(memos)
+    .then((selectedIndex) => {
+      const updatedMemos = memos.filter((_, index) => index !== selectedIndex);
+      saveFile("db.json", updatedMemos);
+      console.log("Memo removed.");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 function main() {
   const { args, options } = getArgsAndOptions();
   const memos = getMemos();
   if (options.l) {
-    displayMemoTitles(memos);
+    listTitles(memos);
   } else if (options.r) {
-    showMemo(memos);
+    showDetail(memos);
   } else if (options.d) {
-    deleteMemo(memos);
+    remove(memos);
   } else if (args.length === 0) {
-    addMemo(memos);
+    add(memos);
   }
 }
 
