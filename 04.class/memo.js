@@ -4,111 +4,145 @@ import { Command } from "commander";
 import readline from "readline";
 import { select } from "@inquirer/prompts";
 
-function getArgsAndOptions() {
-  const program = new Command();
-  program.option("-l");
-  program.option("-r");
-  program.option("-d");
-  program.parse(process.argv);
-  program.arguments("[input]");
-  const options = program.opts();
-  const args = program.args;
-  return { args, options };
-}
-
-function getMemos() {
-  try {
-    return JSON.parse(fs.readFileSync("db.json", "utf8"));
-  } catch (err) {
-    console.log(err);
+class Memo {
+  constructor(body) {
+    this.body = body;
   }
 }
 
-function saveFile(filename, memos) {
-  try {
-    fs.writeFileSync(filename, JSON.stringify(memos, null, 4), "utf-8");
-  } catch (err) {
-    console.log(err);
+class MemoService {
+  constructor(memos, select, readline, storageService) {
+    this.memos = memos;
+    this.select = select;
+    this.readline = readline;
+    this.storageService = storageService;
   }
-}
 
-function add(memos) {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  const newMemo = { body: "" };
-
-  rl.on("line", (line) => {
-    newMemo.body += `${line}\n`;
-  });
-
-  rl.on("close", () => {
-    memos.push(newMemo);
-    saveFile("db.json", memos);
-    console.log("Memo added.");
-  });
-}
-
-function getTitles(memos) {
-  return memos.map((memo) => memo.body.split("\n")[0]);
-}
-
-function listTitles(memos) {
-  const titles = getTitles(memos);
-  titles.forEach((title) => console.log(title));
-}
-
-async function getSelectedIndex(memos) {
-  const titles = getTitles(memos);
-  const memoChoices = titles.map((title, index) => {
-    return {
-      name: title,
-      value: index,
-    };
-  });
-  return select({
-    type: "list",
-    message: "Select a Memo.",
-    choices: memoChoices,
-  });
-}
-
-function showDetail(memos) {
-  getSelectedIndex(memos)
-    .then((selectedIndex) => {
-      console.log(memos[selectedIndex].body);
-    })
-    .catch((err) => {
-      console.log(err);
+  async getSelectedIndex() {
+    const titles = this.memos.map((memo) => memo.body.split("\n")[0]);
+    const memoChoices = titles.map((title, index) => {
+      return {
+        name: title,
+        value: index,
+      };
     });
-}
-
-function remove(memos) {
-  getSelectedIndex(memos)
-    .then((selectedIndex) => {
-      const updatedMemos = memos.filter((_, index) => index !== selectedIndex);
-      saveFile("db.json", updatedMemos);
-      console.log("Memo removed.");
-    })
-    .catch((err) => {
-      console.log(err);
+    return this.select({
+      type: "list",
+      message: "Select a Memo.",
+      choices: memoChoices,
     });
-}
+  }
 
-function main() {
-  const { args, options } = getArgsAndOptions();
-  const memos = getMemos();
-  if (options.l) {
-    listTitles(memos);
-  } else if (options.r) {
-    showDetail(memos);
-  } else if (options.d) {
-    remove(memos);
-  } else if (args.length === 0) {
-    add(memos);
+  showDetail() {
+    this.getSelectedIndex()
+      .then((selectedIndex) => {
+        console.log(memos[selectedIndex].body);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  getTitles() {
+    return this.memos.map((memo) => memo.body.split("\n")[0]);
+  }
+
+  listTitles() {
+    const titles = this.getTitles();
+    titles.forEach((title) => console.log(title));
+  }
+
+  add() {
+    const rl = this.readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+
+    const memo = new Memo("");
+
+    rl.on("line", (line) => {
+      memo.body += `${line}\n`;
+    });
+
+    rl.on("close", () => {
+      this.memos.push(memo);
+      this.storageService.save(this.memos);
+      console.log("Memo added.");
+    });
+  }
+
+  remove() {
+    this.getSelectedIndex(this.memos)
+      .then((selectedIndex) => {
+        const updatedMemos = this.memos.filter(
+          (_, index) => index !== selectedIndex,
+        );
+        this.storageService.save(updatedMemos);
+        console.log("Memo removed.");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 }
 
+class StorageService {
+  constructor(filename) {
+    this.filename = filename;
+  }
+
+  load() {
+    try {
+      return JSON.parse(fs.readFileSync(this.filename, "utf8")).map(
+        (memoData) => new Memo(memoData.body),
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  save(memos) {
+    try {
+      fs.writeFileSync(this.filename, JSON.stringify(memos, null, 4), "utf-8");
+    } catch (err) {
+      console.log(err);
+    }
+  }
+}
+
+class CommandLineInterface {
+  constructor() {
+    this.program = new Command();
+  }
+
+  getArgsAndOptions() {
+    this.program.option("-l");
+    this.program.option("-r");
+    this.program.option("-d");
+    this.program.parse(process.argv);
+    this.program.arguments("[input]");
+
+    const options = this.program.opts();
+    const args = this.program.args;
+    return { args, options };
+  }
+}
+
+function main() {}
+
+const cli = new CommandLineInterface();
+const { args, options } = cli.getArgsAndOptions();
+const storageService = new StorageService("db.json");
+const memos = storageService.load();
+const memoService = new MemoService(memos, select, readline, storageService);
+
+if (options.l) {
+  memoService.listTitles();
+} else if (options.r) {
+  memoService.showDetail();
+} else if (options.d) {
+  memoService.remove();
+} else if (args.length === 0) {
+  memoService.add();
+}
 main();
