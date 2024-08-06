@@ -16,8 +16,12 @@ class MemoService {
     this.storageService = storageService;
   }
 
+  getTitles() {
+    return this.memos.map((memo) => memo.body.split("\n")[0]);
+  }
+
   async getSelectedIndex() {
-    const titles = this.memos.map((memo) => memo.body.split("\n")[0]);
+    const titles = this.getTitles();
     const memoChoices = titles.map((title, index) => {
       return {
         name: title,
@@ -39,10 +43,6 @@ class MemoService {
       .catch((err) => {
         console.log(err);
       });
-  }
-
-  getTitles() {
-    return this.memos.map((memo) => memo.body.split("\n")[0]);
   }
 
   listTitles() {
