@@ -11,10 +11,8 @@ class Memo {
 }
 
 class MemoService {
-  constructor(memos, select, readline, storageService) {
+  constructor(memos, storageService) {
     this.memos = memos;
-    this.select = select;
-    this.readline = readline;
     this.storageService = storageService;
   }
 
@@ -26,7 +24,7 @@ class MemoService {
         value: index,
       };
     });
-    return this.select({
+    return select({
       type: "list",
       message: "Select a Memo.",
       choices: memoChoices,
@@ -53,7 +51,7 @@ class MemoService {
   }
 
   add() {
-    const rl = this.readline.createInterface({
+    const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
     });
@@ -134,7 +132,7 @@ const cli = new CommandLineInterface();
 const { args, options } = cli.getArgsAndOptions();
 const storageService = new StorageService("db.json");
 const memos = storageService.load();
-const memoService = new MemoService(memos, select, readline, storageService);
+const memoService = new MemoService(memos, storageService);
 
 if (options.l) {
   memoService.listTitles();
