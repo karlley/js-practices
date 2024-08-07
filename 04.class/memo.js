@@ -4,9 +4,49 @@ import { Command } from "commander";
 import readline from "readline";
 import { select } from "@inquirer/prompts";
 
+class CommandLineInterface {
+  static program = new Command();
+
+  static getArgsAndOptions() {
+    this.program.option("-l");
+    this.program.option("-r");
+    this.program.option("-d");
+    this.program.parse(process.argv);
+    this.program.arguments("[input]");
+
+    const options = this.program.opts();
+    const args = this.program.args;
+    return { args, options };
+  }
+}
+
 class Memo {
   constructor(body) {
     this.body = body;
+  }
+}
+
+class StorageService {
+  constructor(filename) {
+    this.filename = filename;
+  }
+
+  load() {
+    try {
+      return JSON.parse(fs.readFileSync(this.filename, "utf8")).map(
+        (memoData) => new Memo(memoData.body),
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  save(memos) {
+    try {
+      fs.writeFileSync(this.filename, JSON.stringify(memos, null, 4), "utf-8");
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
 
@@ -81,46 +121,6 @@ class MemoService {
       .catch((err) => {
         console.log(err);
       });
-  }
-}
-
-class StorageService {
-  constructor(filename) {
-    this.filename = filename;
-  }
-
-  load() {
-    try {
-      return JSON.parse(fs.readFileSync(this.filename, "utf8")).map(
-        (memoData) => new Memo(memoData.body),
-      );
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  save(memos) {
-    try {
-      fs.writeFileSync(this.filename, JSON.stringify(memos, null, 4), "utf-8");
-    } catch (err) {
-      console.log(err);
-    }
-  }
-}
-
-class CommandLineInterface {
-  static program = new Command();
-
-  static getArgsAndOptions() {
-    this.program.option("-l");
-    this.program.option("-r");
-    this.program.option("-d");
-    this.program.parse(process.argv);
-    this.program.arguments("[input]");
-
-    const options = this.program.opts();
-    const args = this.program.args;
-    return { args, options };
   }
 }
 
