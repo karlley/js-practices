@@ -60,7 +60,12 @@ class MemoService {
     return this.memos.map((memo) => memo.body.split("\n")[0]);
   }
 
-  async getSelectedIndex() {
+  listTitles() {
+    const titles = this.getTitles();
+    titles.forEach((title) => console.log(title));
+  }
+
+  async promptForGetIndex() {
     const titles = this.getTitles();
     const memoChoices = titles.map((title, index) => {
       return {
@@ -76,18 +81,13 @@ class MemoService {
   }
 
   showDetail() {
-    this.getSelectedIndex()
+    this.promptForGetIndex()
       .then((selectedIndex) => {
         console.log(memos[selectedIndex].body);
       })
       .catch((err) => {
         console.log(err);
       });
-  }
-
-  listTitles() {
-    const titles = this.getTitles();
-    titles.forEach((title) => console.log(title));
   }
 
   add() {
@@ -110,7 +110,7 @@ class MemoService {
   }
 
   remove() {
-    this.getSelectedIndex(this.memos)
+    this.promptForGetIndex(this.memos)
       .then((selectedIndex) => {
         const updatedMemos = this.memos.filter(
           (_, index) => index !== selectedIndex,
