@@ -109,11 +109,9 @@ class StorageService {
 }
 
 class CommandLineInterface {
-  constructor() {
-    this.program = new Command();
-  }
+  static program = new Command();
 
-  getArgsAndOptions() {
+  static getArgsAndOptions() {
     this.program.option("-l");
     this.program.option("-r");
     this.program.option("-d");
@@ -128,8 +126,7 @@ class CommandLineInterface {
 
 function main() {}
 
-const cli = new CommandLineInterface();
-const { args, options } = cli.getArgsAndOptions();
+const { args, options } = CommandLineInterface.getArgsAndOptions();
 const storageService = new StorageService("db.json");
 const memos = storageService.load();
 const memoService = new MemoService(memos, storageService);
@@ -143,4 +140,5 @@ if (options.l) {
 } else if (args.length === 0) {
   memoService.add();
 }
+
 main();
