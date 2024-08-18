@@ -38,6 +38,7 @@ class StorageService {
       );
     } catch (error) {
       console.error(error);
+      return [];
     }
   }
 
@@ -62,12 +63,19 @@ class MemoService {
 
   listTitles() {
     const titles = this.getTitles();
+    if (titles.length === 0) {
+      console.log("No memos found.");
+      return;
+    }
     titles.forEach((title) => console.log(title));
   }
 
   async promptForGetIndex() {
     try {
       const titles = this.getTitles();
+      if (titles.length === 0) {
+        return null;
+      }
       const memoChoices = titles.map((title, index) => {
         return {
           name: title,
@@ -88,9 +96,14 @@ class MemoService {
   async showDetail() {
     try {
       const selectedIndex = await this.promptForGetIndex();
-      console.log(memos[selectedIndex].body);
+      if (selectedIndex === null) {
+        console.log("No memos found.");
+        return;
+      }
+
+      console.log(this.memos[selectedIndex].body);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -103,19 +116,33 @@ class MemoService {
     const memo = new Memo("");
 
     rl.on("line", (line) => {
-      memo.body += `${line}\n`;
+      try {
+        memo.body += `${line}\n`;
+      } catch (error) {
+        console.error(error);
+        rl.close();
+      }
     });
 
     rl.on("close", () => {
-      this.memos.push(memo);
-      this.storageService.save(this.memos);
-      console.log("Memo added.");
+      try {
+        this.memos.push(memo);
+        this.storageService.save(this.memos);
+        console.log("Memo added.");
+      } catch (error) {
+        console.error(error);
+      }
     });
   }
 
   async remove() {
     try {
       const selectedIndex = await this.promptForGetIndex();
+      if (selectedIndex === null) {
+        console.log("No memos found.");
+        return;
+      }
+
       const updateMemos = this.memos.filter((_, index) => {
         return index !== selectedIndex;
       });
@@ -127,25 +154,25 @@ class MemoService {
   }
 }
 
-async function main() {}
+async function main() {
+  const { args, options } = CommandLineInterface.getArgsAndOptions();
+  const storageService = new StorageService("db.json");
+  const memos = storageService.load();
+  const memoService = new MemoService(memos, storageService);
 
-const { args, options } = CommandLineInterface.getArgsAndOptions();
-const storageService = new StorageService("db.json");
-const memos = storageService.load();
-const memoService = new MemoService(memos, storageService);
-
-try {
-  if (options.l) {
-    memoService.listTitles();
-  } else if (options.r) {
-    await memoService.showDetail();
-  } else if (options.d) {
-    await memoService.remove();
-  } else if (args.length === 0) {
-    memoService.add();
+  try {
+    if (options.l) {
+      memoService.listTitles();
+    } else if (options.r) {
+      await memoService.showDetail();
+    } else if (options.d) {
+      await memoService.remove();
+    } else if (args.length === 0) {
+      memoService.add();
+    }
+  } catch (error) {
+    console.error(error);
   }
-} catch (error) {
-  console.error(error);
 }
 
 main();
