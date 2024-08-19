@@ -62,11 +62,12 @@ class MemoService {
   }
 
   listTitles() {
-    const titles = this.getTitles();
-    if (titles.length === 0) {
+    if (this.memos.length === 0) {
       console.log("No memos found.");
       return;
     }
+
+    const titles = this.getTitles();
     titles.forEach((title) => console.log(title));
   }
 
@@ -94,13 +95,13 @@ class MemoService {
   }
 
   async showDetail() {
+    if (this.memos.length === 0) {
+      console.log("No memos found.");
+      return;
+    }
+
     try {
       const selectedIndex = await this.promptForGetIndex();
-      if (selectedIndex === null) {
-        console.log("No memos found.");
-        return;
-      }
-
       console.log(this.memos[selectedIndex].body);
     } catch (error) {
       console.error(error);
@@ -136,13 +137,13 @@ class MemoService {
   }
 
   async remove() {
+    if (this.memos.length === 0) {
+      console.log("No memos found.");
+      return;
+    }
+
     try {
       const selectedIndex = await this.promptForGetIndex();
-      if (selectedIndex === null) {
-        console.log("No memos found.");
-        return;
-      }
-
       const updateMemos = this.memos.filter((_, index) => {
         return index !== selectedIndex;
       });
