@@ -131,20 +131,14 @@ class MemoService {
       input: process.stdin,
       output: process.stdout,
     });
-
-    const memo = new Memo("");
+    const lines = [];
 
     rl.on("line", (line) => {
-      try {
-        memo.body += `${line}\n`;
-      } catch (error) {
-        console.error(error);
-        rl.close();
-      }
+      lines.push(line);
     });
-
     rl.on("close", () => {
       try {
+        const memo = new Memo(lines.join("\n"));
         this.memos.push(memo);
         this.storageService.save(this.memos);
         console.log("Memo added.");
