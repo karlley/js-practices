@@ -108,6 +108,24 @@ class MemoService {
     }
   }
 
+  async remove() {
+    if (this.memos.length === 0) {
+      console.log("No memos found.");
+      return;
+    }
+
+    try {
+      const selectedIndex = await this.promptForGetIndex();
+      const updateMemos = this.memos.filter((_, index) => {
+        return index !== selectedIndex;
+      });
+      this.storageService.save(updateMemos);
+      console.log("Memo removed.");
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   add() {
     const rl = readline.createInterface({
       input: process.stdin,
@@ -134,24 +152,6 @@ class MemoService {
         console.error(error);
       }
     });
-  }
-
-  async remove() {
-    if (this.memos.length === 0) {
-      console.log("No memos found.");
-      return;
-    }
-
-    try {
-      const selectedIndex = await this.promptForGetIndex();
-      const updateMemos = this.memos.filter((_, index) => {
-        return index !== selectedIndex;
-      });
-      this.storageService.save(updateMemos);
-      console.log("Memo removed.");
-    } catch (error) {
-      console.error(error);
-    }
   }
 }
 
