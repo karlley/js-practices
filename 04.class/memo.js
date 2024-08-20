@@ -137,8 +137,15 @@ class MemoService {
       lines.push(line);
     });
     rl.on("close", () => {
+      const body = lines.join("\n").trim();
+
+      if (body === "") {
+        console.log("Cannot create an empty memo.");
+        return;
+      }
+
       try {
-        const memo = new Memo(lines.join("\n"));
+        const memo = new Memo(body);
         this.memos.push(memo);
         this.storageService.save(this.memos);
         console.log("Memo added.");
