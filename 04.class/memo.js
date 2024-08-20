@@ -65,9 +65,9 @@ class MemoService {
   isMemosEmpty() {
     if (this.memos.length === 0) {
       console.log("No memos found.");
-      return false;
+      return true;
     }
-    return true;
+    return false;
   }
 
   getTitles() {
@@ -75,7 +75,7 @@ class MemoService {
   }
 
   listTitles() {
-    if (!this.isMemosEmpty()) return;
+    if (this.isMemosEmpty()) return;
 
     const titles = this.getTitles();
     titles.forEach((title) => console.log(title));
@@ -102,7 +102,7 @@ class MemoService {
   }
 
   async showDetail() {
-    if (!this.isMemosEmpty()) return;
+    if (this.isMemosEmpty()) return;
 
     try {
       const selectedIndex = await this.promptForGetIndex();
@@ -113,7 +113,7 @@ class MemoService {
   }
 
   async remove() {
-    if (!this.isMemosEmpty()) return;
+    if (this.isMemosEmpty()) return;
 
     try {
       const selectedIndex = await this.promptForGetIndex();
