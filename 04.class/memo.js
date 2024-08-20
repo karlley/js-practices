@@ -57,15 +57,20 @@ class MemoService {
     this.storageService = storageService;
   }
 
+  isMemosEmpty() {
+    if (this.memos.length === 0) {
+      console.log("No memos found.");
+      return true;
+    }
+    return false;
+  }
+
   getTitles() {
     return this.memos.map((memo) => memo.body.split("\n")[0]);
   }
 
   listTitles() {
-    if (this.memos.length === 0) {
-      console.log("No memos found.");
-      return;
-    }
+    if (this.isMemosEmpty()) return;
 
     const titles = this.getTitles();
     titles.forEach((title) => console.log(title));
@@ -74,9 +79,6 @@ class MemoService {
   async promptForGetIndex() {
     try {
       const titles = this.getTitles();
-      if (titles.length === 0) {
-        return null;
-      }
       const memoChoices = titles.map((title, index) => {
         return {
           name: title,
@@ -95,10 +97,7 @@ class MemoService {
   }
 
   async showDetail() {
-    if (this.memos.length === 0) {
-      console.log("No memos found.");
-      return;
-    }
+    if (this.isMemosEmpty()) return;
 
     try {
       const selectedIndex = await this.promptForGetIndex();
@@ -109,10 +108,7 @@ class MemoService {
   }
 
   async remove() {
-    if (this.memos.length === 0) {
-      console.log("No memos found.");
-      return;
-    }
+    if (this.isMemosEmpty()) return;
 
     try {
       const selectedIndex = await this.promptForGetIndex();
