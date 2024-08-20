@@ -29,11 +29,12 @@ class Memo {
 class StorageService {
   constructor(filename) {
     this.filename = filename;
+    this.encoding = "utf8";
   }
 
   load() {
     try {
-      return JSON.parse(fs.readFileSync(this.filename, "utf8")).map(
+      return JSON.parse(fs.readFileSync(this.filename, this.encoding)).map(
         (memoData) => new Memo(memoData.body),
       );
     } catch (error) {
@@ -44,7 +45,11 @@ class StorageService {
 
   save(memos) {
     try {
-      fs.writeFileSync(this.filename, JSON.stringify(memos, null, 4), "utf-8");
+      fs.writeFileSync(
+        this.filename,
+        JSON.stringify(memos, null, 4),
+        this.encoding,
+      );
     } catch (error) {
       console.error(error);
     }
