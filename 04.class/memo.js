@@ -4,6 +4,10 @@ import { Command } from "commander";
 import readline from "readline";
 import { select } from "@inquirer/prompts";
 
+const FILENAME = "db.json";
+const ENCODING = "utf8";
+const JSON_SPACING = 4;
+
 class CommandLineInterface {
   static program = new Command();
 
@@ -47,7 +51,7 @@ class StorageService {
     try {
       fs.writeFileSync(
         this.filename,
-        JSON.stringify(memos, null, 4),
+        JSON.stringify(memos, null, JSON_SPACING),
         this.encoding,
       );
     } catch (error) {
@@ -159,7 +163,7 @@ class MemoService {
 
 async function main() {
   const { args, options } = CommandLineInterface.getArgsAndOptions();
-  const storageService = new StorageService("db.json", "utf8");
+  const storageService = new StorageService(FILENAME, ENCODING);
   const memos = storageService.load();
   const memoService = new MemoService(memos, storageService);
 
