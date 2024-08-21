@@ -42,7 +42,7 @@ class StorageService {
         (memoData) => new Memo(memoData.body),
       );
     } catch (error) {
-      console.error(error);
+      console.error("Error loading memos:", error);
       return [];
     }
   }
@@ -55,7 +55,7 @@ class StorageService {
         this.encoding,
       );
     } catch (error) {
-      console.error(error);
+      console.error("Error saving memos:", error);
     }
   }
 }
@@ -101,7 +101,7 @@ class MemoService {
         choices: memoChoices,
       });
     } catch (error) {
-      console.error(error);
+      console.error("Error selecting memo:", error);
     }
   }
 
@@ -112,7 +112,7 @@ class MemoService {
       const selectedIndex = await this.promptForGetIndex();
       console.log(this.memos[selectedIndex].body);
     } catch (error) {
-      console.error(error);
+      console.error("Error showing memo detail:", error);
     }
   }
 
@@ -127,7 +127,7 @@ class MemoService {
       this.storageService.save(updateMemos);
       console.log("Memo removed.");
     } catch (error) {
-      console.error(error);
+      console.error("Error removing memo:", error);
     }
   }
 
@@ -155,7 +155,7 @@ class MemoService {
         this.storageService.save(this.memos);
         console.log("Memo added.");
       } catch (error) {
-        console.error(error);
+        console.error("Error adding memo:", error);
       }
     });
   }
@@ -178,7 +178,7 @@ async function main() {
       memoService.add();
     }
   } catch (error) {
-    console.error(error);
+    console.error("Error executing command:", error);
   }
 }
 
