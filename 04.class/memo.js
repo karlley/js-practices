@@ -27,9 +27,9 @@ class Memo {
 }
 
 class StorageService {
-  constructor(filename) {
+  constructor(filename, encoding) {
     this.filename = filename;
-    this.encoding = "utf8";
+    this.encoding = encoding;
   }
 
   load() {
@@ -159,7 +159,7 @@ class MemoService {
 
 async function main() {
   const { args, options } = CommandLineInterface.getArgsAndOptions();
-  const storageService = new StorageService("db.json");
+  const storageService = new StorageService("db.json", "utf8");
   const memos = storageService.load();
   const memoService = new MemoService(memos, storageService);
 
