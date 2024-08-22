@@ -42,8 +42,7 @@ class StorageService {
         (memoData) => new Memo(memoData.body),
       );
     } catch (error) {
-      console.error("Error loading memos:", error);
-      return [];
+      throw new Error(`Failed to load memos: ${error.message}`);
     }
   }
 
@@ -55,7 +54,7 @@ class StorageService {
         this.encoding,
       );
     } catch (error) {
-      console.error("Error saving memos:", error);
+      throw new Error(`Failed to save memos: ${error.message}`);
     }
   }
 }
@@ -101,7 +100,7 @@ class MemoService {
         choices: memoChoices,
       });
     } catch (error) {
-      console.error("Error selecting memo:", error);
+      throw new Error(`Failed to select memo: ${error.message}`);
     }
   }
 
@@ -112,7 +111,7 @@ class MemoService {
       const selectedIndex = await this.promptForGetIndex();
       console.log(this.memos[selectedIndex].body);
     } catch (error) {
-      console.error("Error showing memo detail:", error);
+      throw new Error(`Failed to show memo detail: ${error.message}`);
     }
   }
 
@@ -127,7 +126,7 @@ class MemoService {
       this.storageService.save(updateMemos);
       console.log("Memo removed.");
     } catch (error) {
-      console.error("Error removing memo:", error);
+      throw new Error(`Failed to remove memo: ${error.message}`);
     }
   }
 
@@ -155,19 +154,19 @@ class MemoService {
         this.storageService.save(this.memos);
         console.log("Memo added.");
       } catch (error) {
-        console.error("Error adding memo:", error);
+        throw new Error(`Failed to add memo: ${error.message}`);
       }
     });
   }
 }
 
 async function main() {
-  const { args, options } = CommandLineInterface.getArgsAndOptions();
-  const storageService = new StorageService(FILENAME, ENCODING);
-  const memos = storageService.load();
-  const memoService = new MemoService(memos, storageService);
-
   try {
+    const { args, options } = CommandLineInterface.getArgsAndOptions();
+    const storageService = new StorageService(FILENAME, ENCODING);
+    const memos = storageService.load();
+    const memoService = new MemoService(memos, storageService);
+
     if (options.l) {
       memoService.listTitles();
     } else if (options.r) {
@@ -178,7 +177,7 @@ async function main() {
       memoService.add();
     }
   } catch (error) {
-    console.error("Error executing command:", error);
+    console.error(error);
   }
 }
 
