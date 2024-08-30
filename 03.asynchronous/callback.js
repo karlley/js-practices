@@ -13,15 +13,15 @@ const createTable = () => {
          )`,
     () => {
       console.log("created table");
-      insertRecords(titles);
+      createBooks(titles);
     },
   );
 };
 
-const insertRecords = (titles, index = 0) => {
+const createBooks = (titles, index = 0) => {
   if (titles.length === index) {
     console.log("inserted record");
-    getRecords();
+    getBooks();
     return;
   }
 
@@ -31,30 +31,30 @@ const insertRecords = (titles, index = 0) => {
     [titles[index]],
     function () {
       console.log(this.lastID);
-      insertRecords(titles, index + 1);
+      createBooks(titles, index + 1);
     },
   );
 };
 
-const getRecords = () => {
+const getBooks = () => {
   db.all(
     `SELECT *
          FROM Books`,
-    function (error, results) {
-      displayRecords(results);
+    (error, books) => {
+      displayBooks(books);
     },
   );
 };
 
-const displayRecords = (records) => {
-  records.forEach((row) => {
-    console.log(`ID: ${row.id} Title: ${row.title}`);
+const displayBooks = (books) => {
+  books.forEach((book) => {
+    console.log(`ID: ${book.id} Title: ${book.title}`);
   });
   deleteTable();
 };
 
 const deleteTable = () => {
-  db.run(`DROP TABLE Books`, function () {
+  db.run(`DROP TABLE Books`, () => {
     console.log("deleted table");
     db.close();
   });
