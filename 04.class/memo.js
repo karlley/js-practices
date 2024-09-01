@@ -30,7 +30,7 @@ class Memo {
   }
 }
 
-class StorageService {
+class Storage {
   constructor(filename, encoding) {
     this.filename = filename;
     this.encoding = encoding;
@@ -59,10 +59,10 @@ class StorageService {
   }
 }
 
-class MemoService {
-  constructor(memos, storageService) {
+class MemoController {
+  constructor(memos, storage) {
     this.memos = memos;
-    this.storageService = storageService;
+    this.storage = storage;
   }
 
   isMemosEmpty() {
@@ -123,7 +123,7 @@ class MemoService {
       const updateMemos = this.memos.filter((_, index) => {
         return index !== selectedIndex;
       });
-      this.storageService.save(updateMemos);
+      this.storage.save(updateMemos);
       console.log("Memo removed.");
     } catch (error) {
       throw new Error(`Failed to remove memo: ${error.message}`);
@@ -151,7 +151,7 @@ class MemoService {
       try {
         const memo = new Memo(body);
         this.memos.push(memo);
-        this.storageService.save(this.memos);
+        this.storage.save(this.memos);
         console.log("Memo added.");
       } catch (error) {
         throw new Error(`Failed to add memo: ${error.message}`);
@@ -163,18 +163,18 @@ class MemoService {
 async function main() {
   try {
     const { args, options } = CommandLineInterface.getArgsAndOptions();
-    const storageService = new StorageService(FILENAME, ENCODING);
-    const memos = storageService.load();
-    const memoService = new MemoService(memos, storageService);
+    const storage = new Storage(FILENAME, ENCODING);
+    const memos = storage.load();
+    const memoController = new MemoController(memos, storage);
 
     if (options.l) {
-      memoService.listTitles();
+      memoController.listTitles();
     } else if (options.r) {
-      await memoService.showDetail();
+      await memoController.showDetail();
     } else if (options.d) {
-      await memoService.remove();
+      await memoController.remove();
     } else if (args.length === 0) {
-      memoService.add();
+      memoController.add();
     }
   } catch (error) {
     console.error(error);
