@@ -24,7 +24,7 @@ class CommandLineInterface {
   }
 }
 
-class Memo {
+class MemoModel {
   constructor(content) {
     this.body = content.body;
   }
@@ -43,7 +43,7 @@ class Storage {
   load() {
     try {
       return JSON.parse(fs.readFileSync(this.filename, this.encoding)).map(
-        (content) => new Memo(content),
+        (content) => new MemoModel(content),
       );
     } catch (error) {
       throw new Error(`Failed to load memos: ${error.message}`);
@@ -149,7 +149,7 @@ class MemoController {
       }
 
       try {
-        const memo = new Memo({ body });
+        const memo = new MemoModel({ body });
         this.memos.push(memo);
         this.storage.save(this.memos);
         console.log("\nMemo added.");
