@@ -28,6 +28,10 @@ class Memo {
   constructor(content) {
     this.body = content.body;
   }
+
+  getTitle() {
+    return this.body.split("\n")[0];
+  }
 }
 
 class Storage {
@@ -73,20 +77,16 @@ class MemoController {
     return false;
   }
 
-  getTitles() {
-    return this.memos.map((memo) => memo.body.split("\n")[0]);
-  }
-
   listTitles() {
     if (this.isMemosEmpty()) return;
 
-    const titles = this.getTitles();
+    const titles = this.memos.map((memo) => memo.getTitle());
     titles.forEach((title) => console.log(title));
   }
 
   async promptForGetIndex() {
     try {
-      const titles = this.getTitles();
+      const titles = this.memos.map((memo) => memo.getTitle());
       const memoChoices = titles.map((title, index) => {
         return {
           name: title,
@@ -152,7 +152,7 @@ class MemoController {
         const memo = new Memo({ body });
         this.memos.push(memo);
         this.storage.save(this.memos);
-        console.log("Memo added.");
+        console.log("\nMemo added.");
       } catch (error) {
         throw new Error(`Failed to add memo: ${error.message}`);
       }
