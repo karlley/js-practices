@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { CommandLineInterface } from "./src/CommandLineInterface.js";
 import { Storage } from "./src/Storage.js";
 import { MemoController } from "./src/MemoController.js";
