@@ -83,7 +83,7 @@ export class MemoController {
       const body = lines.join("\n").trim();
 
       if (body === "") {
-        console.log("Cannot create an empty memo.");
+        console.log("\nCannot create an empty memo.");
         return;
       }
 
