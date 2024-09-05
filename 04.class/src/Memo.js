@@ -1,4 +1,4 @@
-export class MemoModel {
+export class Memo {
   constructor(content) {
     this.body = content.body;
   }

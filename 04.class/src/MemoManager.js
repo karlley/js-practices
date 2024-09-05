@@ -1,8 +1,8 @@
 import readline from "readline";
 import { select } from "@inquirer/prompts";
-import { MemoModel } from "./MemoModel.js";
+import { Memo } from "./Memo.js";
 
-export class MemoController {
+export class MemoManager {
   constructor(memos, storage) {
     this.memos = memos;
     this.storage = storage;
@@ -88,7 +88,7 @@ export class MemoController {
       }
 
       try {
-        const memo = new MemoModel({ body });
+        const memo = new Memo({ body });
         this.memos.push(memo);
         this.storage.save(this.memos);
         console.log("\nMemo added.");

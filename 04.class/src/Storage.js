@@ -1,5 +1,5 @@
 import fs from "fs";
-import { MemoModel } from "./MemoModel.js";
+import { Memo } from "./Memo.js";
 
 const JSON_SPACING = 4;
 
@@ -12,7 +12,7 @@ export class Storage {
   load() {
     try {
       return JSON.parse(fs.readFileSync(this.filename, this.encoding)).map(
-        (content) => new MemoModel(content),
+        (content) => new Memo(content),
       );
     } catch (error) {
       throw new Error(`Failed to load memos: ${error.message}`);
