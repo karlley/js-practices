@@ -4,24 +4,29 @@ import sqlite3 from "sqlite3";
 const db = new sqlite3.Database(":memory:");
 const titles = ["書籍1", "書籍2", "書籍3"];
 
-const createTable = () => {
+const createTable = (callback) => {
   db.run(
     `CREATE TABLE Books
          (
              id    INTEGER PRIMARY KEY AUTOINCREMENT,
              title TEXT UNIQUE
          )`,
-    () => {
-      console.log("created table");
-      createBooks(titles);
+    (error) => {
+      if (error) {
+        callback(error);
+        return;
+      } else {
+        console.log("Created Table");
+        createBooks(titles, 0, callback);
+      }
     },
   );
 };
 
-const createBooks = (titles, index = 0) => {
+const createBooks = (titles, index = 0, callback) => {
   if (titles.length === index) {
-    console.log("inserted record");
-    getBooks();
+    console.log("Created books");
+    getBooks(callback);
     return;
   }
 
@@ -29,39 +34,79 @@ const createBooks = (titles, index = 0) => {
     `INSERT INTO Books (title)
          VALUES (?)`,
     [titles[index]],
-    function () {
-      console.log(this.lastID);
-      createBooks(titles, index + 1);
+    function (error) {
+      if (error) {
+        callback(error);
+        return;
+      } else {
+        console.log(this.lastID);
+        createBooks(titles, index + 1, callback);
+      }
     },
   );
 };
 
-const getBooks = () => {
+const getBooks = (callback) => {
   db.all(
     `SELECT *
          FROM Books`,
     (error, books) => {
-      displayBooks(books);
+      if (error) {
+        callback(error);
+        return;
+      } else {
+        displayBooks(books, callback);
+      }
     },
   );
 };
 
-const displayBooks = (books) => {
+const displayBooks = (books, callback) => {
+  if (!Array.isArray(books) || books.length === 0) {
+    const errorMessage = !Array.isArray(books)
+      ? "Invalid Data"
+      : "No books found";
+    callback(new Error(errorMessage));
+    return;
+  }
   books.forEach((book) => {
     console.log(`ID: ${book.id} Title: ${book.title}`);
   });
-  deleteTable();
+  deleteTable(callback);
 };
 
-const deleteTable = () => {
-  db.run(`DROP TABLE Books`, () => {
-    console.log("deleted table");
-    db.close();
+const deleteTable = (callback) => {
+  db.run(`DROP TABLE Books`, (error) => {
+    if (error) {
+      callback(error);
+      return;
+    } else {
+      console.log("Deleted table");
+      closeDB(callback);
+    }
   });
 };
 
+const closeDB = (callback) => {
+  db.close((error) => {
+    if (!error) {
+      callback(error);
+      return;
+    } else {
+      console.log("Closed DB");
+      return;
+    }
+  });
+};
+
+const errorHandler = (error) => {
+  if (error) {
+    console.error("Error: " + error.message);
+  }
+};
+
 function main() {
-  createTable();
+  createTable(errorHandler);
 }
 
 main();
