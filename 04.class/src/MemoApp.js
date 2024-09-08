@@ -2,7 +2,7 @@ import readline from "readline";
 import { select } from "@inquirer/prompts";
 import { Memo } from "./Memo.js";
 
-export class MemoManager {
+export class MemoApp {
   constructor(memos, storage) {
     this.memos = memos;
     this.storage = storage;

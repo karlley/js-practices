@@ -2,7 +2,7 @@
 
 import { CommandLineInterface } from "./src/CommandLineInterface.js";
 import { Storage } from "./src/Storage.js";
-import { MemoManager } from "./src/MemoManager.js";
+import { MemoApp } from "./src/MemoApp.js";
 
 const FILENAME = "db.json";
 const ENCODING = "utf8";
@@ -12,16 +12,16 @@ async function main() {
     const { args, options } = CommandLineInterface.getArgsAndOptions();
     const storage = new Storage(FILENAME, ENCODING);
     const memos = storage.load();
-    const memoManager = new MemoManager(memos, storage);
+    const memoApp = new MemoApp(memos, storage);
 
     if (options.l) {
-      memoManager.listTitles();
+      memoApp.listTitles();
     } else if (options.r) {
-      await memoManager.showDetail();
+      await memoApp.showDetail();
     } else if (options.d) {
-      await memoManager.remove();
+      await memoApp.remove();
     } else if (args.length === 0) {
-      memoManager.add();
+      memoApp.add();
     }
   } catch (error) {
     console.error(error);
