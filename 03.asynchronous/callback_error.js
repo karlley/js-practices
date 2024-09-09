@@ -11,13 +11,8 @@ const createTable = (callback) => {
              id    INTEGER PRIMARY KEY AUTOINCREMENT,
              title TEXT UNIQUE
          )`,
-    (error) => {
-      if (error) {
-        callback(error);
-        return;
-      } else {
-        createBooks(titles, 0, callback);
-      }
+    () => {
+      createBooks(titles, 0, callback);
     },
   );
 };
@@ -29,13 +24,13 @@ const createBooks = (titles, index = 0, callback) => {
   }
 
   db.run(
-    `INSERT INTO Books (title)
+    `INSERT INTO InvalidTable (title)
          VALUES (?)`,
     [titles[index]],
     function (error) {
       if (error) {
         callback(error);
-        return;
+        createBooks(titles, index + 1, callback);
       } else {
         console.log(`ID: ${this.lastID} created.`);
         createBooks(titles, index + 1, callback);
@@ -47,62 +42,44 @@ const createBooks = (titles, index = 0, callback) => {
 const getBooks = (callback) => {
   db.all(
     `SELECT *
-         FROM Books`,
+         FROM InvalidTable`,
     (error, books) => {
       if (error) {
         callback(error);
-        return;
+        deleteTable();
       } else {
-        displayBooks(books, callback);
+        displayBooks(books);
       }
     },
   );
 };
 
-const displayBooks = (books, callback) => {
-  if (!Array.isArray(books) || books.length === 0) {
-    const errorMessage = !Array.isArray(books)
-      ? "Invalid data."
-      : "No books found.";
-    callback(new Error(errorMessage));
-    return;
-  }
+const displayBooks = (books) => {
   books.forEach((book) => {
     console.log(`ID: ${book.id}, Title: ${book.title}`);
   });
-  deleteTable(callback);
+  deleteTable();
 };
 
-const deleteTable = (callback) => {
-  db.run(`DROP TABLE Books`, (error) => {
-    if (error) {
-      callback(error);
-      return;
-    } else {
-      closeDB(callback);
-    }
+const deleteTable = () => {
+  db.run(`DROP TABLE Books`, () => {
+    closeDB();
   });
 };
 
-const closeDB = (callback) => {
-  db.close((error) => {
-    if (!error) {
-      callback(error);
-      return;
-    } else {
-      return;
-    }
-  });
+const closeDB = () => {
+  db.close();
+  return;
 };
 
-const errorHandler = (error) => {
+const displayError = (error) => {
   if (error) {
     console.error("Error: " + error.message);
   }
 };
 
 function main() {
-  createTable(errorHandler);
+  createTable(displayError);
 }
 
 main();
