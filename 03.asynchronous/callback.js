@@ -12,7 +12,6 @@ const createTable = () => {
              title TEXT UNIQUE
          )`,
     () => {
-      console.log("created table");
       createBooks(titles);
     },
   );
@@ -20,7 +19,6 @@ const createTable = () => {
 
 const createBooks = (titles, index = 0) => {
   if (titles.length === index) {
-    console.log("inserted record");
     getBooks();
     return;
   }
@@ -30,7 +28,7 @@ const createBooks = (titles, index = 0) => {
          VALUES (?)`,
     [titles[index]],
     function () {
-      console.log(this.lastID);
+      console.log(`ID: ${this.lastID} created.`);
       createBooks(titles, index + 1);
     },
   );
@@ -48,16 +46,20 @@ const getBooks = () => {
 
 const displayBooks = (books) => {
   books.forEach((book) => {
-    console.log(`ID: ${book.id} Title: ${book.title}`);
+    console.log(`ID: ${book.id}, Title: ${book.title}`);
   });
   deleteTable();
 };
 
 const deleteTable = () => {
   db.run(`DROP TABLE Books`, () => {
-    console.log("deleted table");
-    db.close();
+    closeDB();
   });
+};
+
+const closeDB = () => {
+  db.close();
+  return;
 };
 
 function main() {

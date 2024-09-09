@@ -16,7 +16,6 @@ const createTable = (callback) => {
         callback(error);
         return;
       } else {
-        console.log("Created Table");
         createBooks(titles, 0, callback);
       }
     },
@@ -25,7 +24,6 @@ const createTable = (callback) => {
 
 const createBooks = (titles, index = 0, callback) => {
   if (titles.length === index) {
-    console.log("Created books");
     getBooks(callback);
     return;
   }
@@ -39,7 +37,7 @@ const createBooks = (titles, index = 0, callback) => {
         callback(error);
         return;
       } else {
-        console.log(this.lastID);
+        console.log(`ID: ${this.lastID} created.`);
         createBooks(titles, index + 1, callback);
       }
     },
@@ -64,13 +62,13 @@ const getBooks = (callback) => {
 const displayBooks = (books, callback) => {
   if (!Array.isArray(books) || books.length === 0) {
     const errorMessage = !Array.isArray(books)
-      ? "Invalid Data"
-      : "No books found";
+      ? "Invalid data."
+      : "No books found.";
     callback(new Error(errorMessage));
     return;
   }
   books.forEach((book) => {
-    console.log(`ID: ${book.id} Title: ${book.title}`);
+    console.log(`ID: ${book.id}, Title: ${book.title}`);
   });
   deleteTable(callback);
 };
@@ -81,7 +79,6 @@ const deleteTable = (callback) => {
       callback(error);
       return;
     } else {
-      console.log("Deleted table");
       closeDB(callback);
     }
   });
@@ -93,7 +90,6 @@ const closeDB = (callback) => {
       callback(error);
       return;
     } else {
-      console.log("Closed DB");
       return;
     }
   });
