@@ -1,81 +1,16 @@
 #!/usr/bin/env node
-import sqlite3 from "sqlite3";
+import { runPromise, allPromise, closePromise } from "./promiseFunctions.js";
 
-const db = new sqlite3.Database(":memory:");
 const titles = ["書籍1", "書籍2", "書籍3"];
-
-const runPromise = (sql, params = [], callback = null) => {
-  return new Promise((resolve, reject) => {
-    db.run(sql, params, function (error) {
-      if (error) {
-        if (callback) {
-          callback(error);
-        } else {
-          reject(error);
-        }
-      } else {
-        if (callback) {
-          callback(null);
-        } else {
-          resolve(this);
-        }
-      }
-    });
-  });
-};
-
-const allPromise = (sql, params = [], callback = null) => {
-  return new Promise((resolve, reject) => {
-    db.all(sql, params, function (error, rows) {
-      if (error) {
-        if (callback) {
-          callback(error);
-        } else {
-          reject(error);
-        }
-      } else {
-        if (callback) {
-          callback(null, rows);
-        } else {
-          resolve(rows);
-        }
-      }
-    });
-  });
-};
-
-const closePromise = (callback = null) => {
-  return new Promise((resolve, reject) => {
-    db.close(function (error) {
-      if (error) {
-        if (callback) {
-          callback(error);
-        } else {
-          reject(error);
-        }
-      } else {
-        if (callback) {
-          callback(null);
-        } else {
-          resolve(null);
-        }
-      }
-    });
-  });
-};
-
 const createTableSQL = `CREATE TABLE Books
                         (
                             id    INTEGER PRIMARY KEY AUTOINCREMENT,
                             title TEXT UNIQUE
                         )`;
-
 const createBooksSQL = `INSERT INTO Books (title)
                         VALUES (?)`;
-
 const getBooksSQL = `SELECT *
                      FROM Books`;
-
 const deleteTableSQL = `DROP TABLE Books`;
 
 const createTable = () => {
