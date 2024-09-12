@@ -1,11 +1,15 @@
 #!/usr/bin/env node
-import { runPromise, allPromise, closePromise } from "./db/promiseFunctions.js";
+import {
+  runPromise,
+  allPromise,
+  closePromise,
+} from "../db/promiseFunctions.js";
 import {
   createTableSQL,
-  createBooksSQL,
-  getBooksSQL,
+  invalidCreateBooksSQL,
+  invalidGetBooksSQL,
   deleteTableSQL,
-} from "./db/queries.js";
+} from "../db/queries.js";
 
 const titles = ["書籍1", "書籍2", "書籍3"];
 
@@ -18,14 +22,18 @@ const createBooks = (titles, index = 0) => {
     return Promise.resolve();
   }
 
-  return runPromise(createBooksSQL, [titles[index]]).then((result) => {
-    console.log(`ID: ${result.lastID} created.`);
-    return createBooks(titles, index + 1);
-  });
+  return runPromise(invalidCreateBooksSQL, [titles[index]])
+    .then((result) => {
+      console.log(`ID: ${result.lastID} created.`);
+      return createBooks(titles, index + 1);
+    })
+    .catch((error) => {
+      return Promise.reject(error);
+    });
 };
 
 const getBooks = () => {
-  return allPromise(getBooksSQL);
+  return allPromise(invalidGetBooksSQL);
 };
 
 const displayBooks = (books) => {
@@ -43,6 +51,12 @@ const closeDB = () => {
   return closePromise();
 };
 
+const displayError = (error) => {
+  if (error) {
+    console.error("Error: " + error.message);
+  }
+};
+
 function main() {
   createTable()
     .then(() => {
@@ -56,6 +70,9 @@ function main() {
     })
     .then(() => {
       return deleteTable();
+    })
+    .catch((error) => {
+      displayError(error);
     })
     .finally(() => {
       closeDB();

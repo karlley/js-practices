@@ -5,7 +5,7 @@ import {
   createBooksSQL,
   getBooksSQL,
   deleteTableSQL,
-} from "./db/queries.js";
+} from "../db/queries.js";
 
 const db = new sqlite3.Database(":memory:");
 const titles = ["書籍1", "書籍2", "書籍3"];
