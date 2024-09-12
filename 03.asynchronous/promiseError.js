@@ -1,17 +1,13 @@
 #!/usr/bin/env node
-import { runPromise, allPromise, closePromise } from "./promiseFunctions.js";
+import { runPromise, allPromise, closePromise } from "./db/promiseFunctions.js";
+import {
+  createTableSQL,
+  invalidCreateBooksSQL,
+  invalidGetBooksSQL,
+  deleteTableSQL,
+} from "./db/queries.js";
 
 const titles = ["書籍1", "書籍2", "書籍3"];
-const createTableSQL = `CREATE TABLE Books
-                        (
-                            id    INTEGER PRIMARY KEY AUTOINCREMENT,
-                            title TEXT UNIQUE
-                        )`;
-const createBooksSQL = `INSERT INTO InvalidTable (title)
-                        VALUES (?)`;
-const getBooksSQL = `SELECT *
-                     FROM InvalidTable`;
-const deleteTableSQL = `DROP TABLE Books`;
 
 const createTable = () => {
   return runPromise(createTableSQL);
@@ -22,7 +18,7 @@ const createBooks = (titles, index = 0) => {
     return Promise.resolve();
   }
 
-  return runPromise(createBooksSQL, [titles[index]])
+  return runPromise(invalidCreateBooksSQL, [titles[index]])
     .then((result) => {
       console.log(`ID: ${result.lastID} created.`);
       return createBooks(titles, index + 1);
@@ -33,7 +29,7 @@ const createBooks = (titles, index = 0) => {
 };
 
 const getBooks = () => {
-  return allPromise(getBooksSQL);
+  return allPromise(invalidGetBooksSQL);
 };
 
 const displayBooks = (books) => {
