@@ -7,10 +7,10 @@ const createTableSQL = `CREATE TABLE Books
                             id    INTEGER PRIMARY KEY AUTOINCREMENT,
                             title TEXT UNIQUE
                         )`;
-const createBooksSQL = `INSERT INTO Books (title)
+const createBooksSQL = `INSERT INTO InvalidTable (title)
                         VALUES (?)`;
 const getBooksSQL = `SELECT *
-                     FROM Books`;
+                     FROM InvalidTable`;
 const deleteTableSQL = `DROP TABLE Books`;
 
 const createTable = () => {
@@ -22,10 +22,14 @@ const createBooks = (titles, index = 0) => {
     return Promise.resolve();
   }
 
-  return runPromise(createBooksSQL, [titles[index]]).then((result) => {
-    console.log(`ID: ${result.lastID} created.`);
-    return createBooks(titles, index + 1);
-  });
+  return runPromise(createBooksSQL, [titles[index]])
+    .then((result) => {
+      console.log(`ID: ${result.lastID} created.`);
+      return createBooks(titles, index + 1);
+    })
+    .catch((error) => {
+      return Promise.reject(error);
+    });
 };
 
 const getBooks = () => {
@@ -47,6 +51,12 @@ const closeDB = () => {
   return closePromise();
 };
 
+const displayError = (error) => {
+  if (error) {
+    console.error("Error: " + error.message);
+  }
+};
+
 function main() {
   createTable()
     .then(() => {
@@ -64,7 +74,10 @@ function main() {
     .then(() => {
       return closeDB();
     })
-    .then(() => {});
+    .then(() => {})
+    .catch((error) => {
+      displayError(error);
+    });
 }
 
 main();
