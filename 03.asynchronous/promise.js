@@ -61,10 +61,9 @@ function main() {
     .then(() => {
       return deleteTable();
     })
-    .then(() => {
-      return closeDB();
-    })
-    .then(() => {});
+    .finally(() => {
+      closeDB();
+    });
 }
 
 main();

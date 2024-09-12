@@ -71,12 +71,11 @@ function main() {
     .then(() => {
       return deleteTable();
     })
-    .then(() => {
-      return closeDB();
-    })
-    .then(() => {})
     .catch((error) => {
       displayError(error);
+    })
+    .finally(() => {
+      closeDB();
     });
 }
 
