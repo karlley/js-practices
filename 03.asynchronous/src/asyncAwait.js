@@ -13,22 +13,21 @@ import {
 
 const titles = ["書籍1", "書籍2", "書籍3"];
 
-const createTable = () => {
+const createTable = async () => {
   return runPromise(createTableSQL);
 };
 
-const createBooks = (titles, index = 0) => {
+const createBooks = async (titles, index = 0) => {
   if (titles.length === index) {
-    return Promise.resolve();
+    return;
   }
 
-  return runPromise(createBooksSQL, [titles[index]]).then((result) => {
-    console.log(`ID: ${result.lastID} created.`);
-    return createBooks(titles, index + 1);
-  });
+  const result = await runPromise(createBooksSQL, [titles[index]]);
+  console.log(`ID: ${result.lastID} created.`);
+  return createBooks(titles, index + 1);
 };
 
-const getBooks = () => {
+const getBooks = async () => {
   return allPromise(getBooksSQL);
 };
 
@@ -36,34 +35,23 @@ const displayBooks = (books) => {
   books.forEach((book) => {
     console.log(`ID: ${book.id}, Title: ${book.title}`);
   });
-  return Promise.resolve();
 };
 
-const deleteTable = () => {
+const deleteTable = async () => {
   return runPromise(deleteTableSQL);
 };
 
-const closeDB = () => {
+const closeDB = async () => {
   return closePromise();
 };
 
-function main() {
-  createTable()
-    .then(() => {
-      return createBooks(titles);
-    })
-    .then(() => {
-      return getBooks();
-    })
-    .then((books) => {
-      return displayBooks(books);
-    })
-    .then(() => {
-      return deleteTable();
-    })
-    .finally(() => {
-      closeDB();
-    });
+async function main() {
+  await createTable();
+  await createBooks(titles);
+  const books = await getBooks();
+  displayBooks(books);
+  await deleteTable();
+  await closeDB();
 }
 
 main();
