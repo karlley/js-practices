@@ -25,10 +25,11 @@ const createBooks = (titles, index = 0) => {
   return runPromise(invalidCreateBooksSQL, [titles[index]])
     .then((result) => {
       console.log(`ID: ${result.lastID} created.`);
-      return createBooks(titles, index + 1);
     })
     .catch((error) => {
       displayError(error);
+    })
+    .finally(() => {
       return createBooks(titles, index + 1);
     });
 };
