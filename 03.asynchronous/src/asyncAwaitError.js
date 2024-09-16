@@ -6,8 +6,8 @@ import {
 } from "../db/promiseFunctions.js";
 import {
   createTableSQL,
-  createBooksSQL,
-  getBooksSQL,
+  invalidCreateBooksSQL,
+  invalidGetBooksSQL,
   deleteTableSQL,
 } from "../db/queries.js";
 
@@ -22,13 +22,18 @@ const createBooks = async (titles, index = 0) => {
     return;
   }
 
-  const result = await runPromise(createBooksSQL, [titles[index]]);
-  console.log(`ID: ${result.lastID} created.`);
+  try {
+    const result = await runPromise(invalidCreateBooksSQL, [titles[index]]);
+    console.log(`ID: ${result.lastID} created.`);
+  } catch (error) {
+    displayError(error);
+  }
+
   return createBooks(titles, index + 1);
 };
 
 const getBooks = async () => {
-  return allPromise(getBooksSQL);
+  return allPromise(invalidGetBooksSQL);
 };
 
 const displayBooks = (books) => {
@@ -45,13 +50,23 @@ const closeDB = async () => {
   return closePromise();
 };
 
+const displayError = (error) => {
+  if (error) {
+    console.error("Error: " + error.message);
+  }
+};
+
 async function main() {
-  await createTable();
-  await createBooks(titles);
-  const books = await getBooks();
-  displayBooks(books);
-  await deleteTable();
-  await closeDB();
+  try {
+    await createTable();
+    await createBooks(titles);
+    const books = await getBooks();
+    displayBooks(books);
+    await deleteTable();
+    await closeDB();
+  } catch (error) {
+    displayError(error);
+  }
 }
 
 main();
