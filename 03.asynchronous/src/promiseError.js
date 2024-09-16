@@ -28,7 +28,8 @@ const createBooks = (titles, index = 0) => {
       return createBooks(titles, index + 1);
     })
     .catch((error) => {
-      return Promise.reject(error);
+      displayError(error);
+      return createBooks(titles, index + 1);
     });
 };
 
