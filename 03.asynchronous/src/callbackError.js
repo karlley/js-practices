@@ -10,66 +10,35 @@ import {
 const db = new sqlite3.Database(":memory:");
 const titles = ["書籍1", "書籍2", "書籍3"];
 
-const createTable = (callback) => {
+function main(titles) {
   db.run(createTableSQL, () => {
-    createBooks(titles, 0, callback);
-  });
-};
+    let createdCount = 0;
+    for (let index = 0; index < titles.length; index++) {
+      db.run(invalidCreateBooksSQL, titles[index], function (error) {
+        if (error) {
+          console.error(`Error: ${error.message}`);
+        } else {
+          console.log(`ID: ${this.lastID} created.`);
+        }
+        createdCount++;
 
-const createBooks = (titles, index = 0, callback) => {
-  if (titles.length === index) {
-    getBooks(callback);
-    return;
-  }
-
-  db.run(invalidCreateBooksSQL, [titles[index]], function (error) {
-    if (error) {
-      callback(error);
-      createBooks(titles, index + 1, callback);
-    } else {
-      console.log(`ID: ${this.lastID} created.`);
-      createBooks(titles, index + 1, callback);
+        if (createdCount === titles.length) {
+          db.all(invalidGetBooksSQL, (error, books) => {
+            if (error) {
+              console.error(`Error: ${error.message}`);
+            } else {
+              books.forEach((book) => {
+                console.log(`ID: ${book.id}, Title: ${book.title}`);
+              });
+            }
+            db.run(deleteTableSQL, () => {
+              db.close();
+            });
+          });
+        }
+      });
     }
   });
-};
-
-const getBooks = (callback) => {
-  db.all(invalidGetBooksSQL, (error, books) => {
-    if (error) {
-      callback(error);
-      deleteTable();
-    } else {
-      displayBooks(books);
-    }
-  });
-};
-
-const displayBooks = (books) => {
-  books.forEach((book) => {
-    console.log(`ID: ${book.id}, Title: ${book.title}`);
-  });
-  deleteTable();
-};
-
-const deleteTable = () => {
-  db.run(deleteTableSQL, () => {
-    closeDB();
-  });
-};
-
-const closeDB = () => {
-  db.close();
-  return;
-};
-
-const displayError = (error) => {
-  if (error) {
-    console.error("Error: " + error.message);
-  }
-};
-
-function main() {
-  createTable(displayError);
 }
 
-main();
+main(titles);

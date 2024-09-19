@@ -10,50 +10,27 @@ import {
 const db = new sqlite3.Database(":memory:");
 const titles = ["書籍1", "書籍2", "書籍3"];
 
-const createTable = () => {
+function main(titles) {
   db.run(createTableSQL, () => {
-    createBooks(titles);
+    let createdCount = 0;
+    for (let index = 0; index < titles.length; index++) {
+      db.run(createBooksSQL, titles[index], function () {
+        console.log(`ID: ${this.lastID} created.`);
+        createdCount++;
+
+        if (createdCount === titles.length) {
+          db.all(getBooksSQL, (_, books) => {
+            books.forEach((book) => {
+              console.log(`ID: ${book.id}, Title: ${book.title}`);
+            });
+            db.run(deleteTableSQL, () => {
+              db.close();
+            });
+          });
+        }
+      });
+    }
   });
-};
-
-const createBooks = (titles, index = 0) => {
-  if (titles.length === index) {
-    getBooks();
-    return;
-  }
-
-  db.run(createBooksSQL, [titles[index]], function () {
-    console.log(`ID: ${this.lastID} created.`);
-    createBooks(titles, index + 1);
-  });
-};
-
-const getBooks = () => {
-  db.all(getBooksSQL, (error, books) => {
-    displayBooks(books);
-  });
-};
-
-const displayBooks = (books) => {
-  books.forEach((book) => {
-    console.log(`ID: ${book.id}, Title: ${book.title}`);
-  });
-  deleteTable();
-};
-
-const deleteTable = () => {
-  db.run(deleteTableSQL, () => {
-    closeDB();
-  });
-};
-
-const closeDB = () => {
-  db.close();
-  return;
-};
-
-function main() {
-  createTable();
 }
 
-main();
+main(titles);
