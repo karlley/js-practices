@@ -2,8 +2,8 @@
 import sqlite3 from "sqlite3";
 import {
   createTableSQL,
-  invalidCreateBooksSQL,
-  invalidGetBooksSQL,
+  invalidInsertBookSQL,
+  invalidFetchBookSQL,
   deleteTableSQL,
 } from "../db/queries.js";
 
@@ -14,7 +14,7 @@ function main(titles) {
   db.run(createTableSQL, () => {
     let createdCount = 0;
     for (let index = 0; index < titles.length; index++) {
-      db.run(invalidCreateBooksSQL, titles[index], function (error) {
+      db.run(invalidInsertBookSQL, titles[index], function (error) {
         if (error) {
           console.error(`Error: ${error.message}`);
         } else {
@@ -23,7 +23,7 @@ function main(titles) {
         createdCount++;
 
         if (createdCount === titles.length) {
-          db.all(invalidGetBooksSQL, (error, books) => {
+          db.all(invalidFetchBookSQL, (error, books) => {
             if (error) {
               console.error(`Error: ${error.message}`);
             } else {

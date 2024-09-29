@@ -2,8 +2,8 @@
 import sqlite3 from "sqlite3";
 import {
   createTableSQL,
-  createBooksSQL,
-  getBooksSQL,
+  insertBookSQL,
+  fetchBookSQL,
   deleteTableSQL,
 } from "../db/queries.js";
 
@@ -14,12 +14,12 @@ function main(titles) {
   db.run(createTableSQL, () => {
     let createdCount = 0;
     for (let index = 0; index < titles.length; index++) {
-      db.run(createBooksSQL, titles[index], function () {
+      db.run(insertBookSQL, titles[index], function () {
         console.log(`ID: ${this.lastID} created.`);
         createdCount++;
 
         if (createdCount === titles.length) {
-          db.all(getBooksSQL, (_, books) => {
+          db.all(fetchBookSQL, (_, books) => {
             books.forEach((book) => {
               console.log(`ID: ${book.id}, Title: ${book.title}`);
             });
