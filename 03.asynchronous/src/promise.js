@@ -1,69 +1,42 @@
 #!/usr/bin/env node
 import {
   runPromise,
+  runMultiplePromise,
   allPromise,
   closePromise,
 } from "../db/promiseFunctions.js";
 import {
   createTableSQL,
-  createBooksSQL,
-  getBooksSQL,
+  insertBookSQL,
+  fetchBookSQL,
   deleteTableSQL,
 } from "../db/queries.js";
 
 const titles = ["書籍1", "書籍2", "書籍3"];
 
-const createTable = () => {
-  return runPromise(createTableSQL);
-};
-
-const createBooks = (titles, index = 0) => {
-  if (titles.length === index) {
-    return Promise.resolve();
-  }
-
-  return runPromise(createBooksSQL, [titles[index]]).then((result) => {
-    console.log(`ID: ${result.lastID} created.`);
-    return createBooks(titles, index + 1);
-  });
-};
-
-const getBooks = () => {
-  return allPromise(getBooksSQL);
-};
-
-const displayBooks = (books) => {
-  books.forEach((book) => {
-    console.log(`ID: ${book.id}, Title: ${book.title}`);
-  });
-  return Promise.resolve();
-};
-
-const deleteTable = () => {
-  return runPromise(deleteTableSQL);
-};
-
-const closeDB = () => {
-  return closePromise();
-};
-
-function main() {
-  createTable()
+function main(titles) {
+  runPromise(createTableSQL)
     .then(() => {
-      return createBooks(titles);
+      return runMultiplePromise(insertBookSQL, titles);
+    })
+    .then((insertedBooks) => {
+      insertedBooks.forEach((insertedBook) => {
+        console.log(`ID: ${insertedBook.lastID} created.`);
+      });
     })
     .then(() => {
-      return getBooks();
+      return allPromise(fetchBookSQL);
     })
-    .then((books) => {
-      return displayBooks(books);
-    })
-    .then(() => {
-      return deleteTable();
+    .then((fetchedBooks) => {
+      fetchedBooks.forEach((fetchedBook) => {
+        console.log(`ID: ${fetchedBook.id}, Title: ${fetchedBook.title}`);
+      });
     })
     .finally(() => {
-      closeDB();
+      runPromise(deleteTableSQL).then(() => {
+        closePromise();
+      });
     });
 }
 
-main();
+main(titles);

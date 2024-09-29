@@ -3,82 +3,51 @@ import {
   runPromise,
   allPromise,
   closePromise,
+  runMultiplePromise,
 } from "../db/promiseFunctions.js";
 import {
   createTableSQL,
-  invalidCreateBooksSQL,
-  invalidGetBooksSQL,
+  invalidInsertBookSQL,
+  invalidFetchBookSQL,
   deleteTableSQL,
 } from "../db/queries.js";
 
 const titles = ["書籍1", "書籍2", "書籍3"];
 
-const createTable = () => {
-  return runPromise(createTableSQL);
-};
-
-const createBooks = (titles, index = 0) => {
-  if (titles.length === index) {
-    return Promise.resolve();
-  }
-
-  return runPromise(invalidCreateBooksSQL, [titles[index]])
-    .then((result) => {
-      console.log(`ID: ${result.lastID} created.`);
+function main(titles) {
+  runPromise(createTableSQL)
+    .then(() => {
+      return runMultiplePromise(invalidInsertBookSQL, titles);
+    })
+    .then((insertedBooks) => {
+      insertedBooks.forEach((insertedBook) => {
+        console.log(`ID: ${insertedBook.lastID} created.`);
+      });
     })
     .catch((error) => {
-      displayError(error);
-    })
-    .finally(() => {
-      return createBooks(titles, index + 1);
-    });
-};
-
-const getBooks = () => {
-  return allPromise(invalidGetBooksSQL);
-};
-
-const displayBooks = (books) => {
-  books.forEach((book) => {
-    console.log(`ID: ${book.id}, Title: ${book.title}`);
-  });
-  return Promise.resolve();
-};
-
-const deleteTable = () => {
-  return runPromise(deleteTableSQL);
-};
-
-const closeDB = () => {
-  return closePromise();
-};
-
-const displayError = (error) => {
-  if (error) {
-    console.error("Error: " + error.message);
-  }
-};
-
-function main() {
-  createTable()
-    .then(() => {
-      return createBooks(titles);
+      console.error(error.message);
+      return Promise.resolve([]);
     })
     .then(() => {
-      return getBooks();
+      return allPromise(invalidFetchBookSQL);
     })
-    .then((books) => {
-      return displayBooks(books);
-    })
-    .then(() => {
-      return deleteTable();
+    .then((fetchedBooks) => {
+      if (fetchedBooks.length === 0) {
+        console.log("Books not found.");
+      } else {
+        fetchedBooks.forEach((fetchedBook) => {
+          console.log(`ID: ${fetchedBook.id}, Title: ${fetchedBook.title}`);
+        });
+      }
     })
     .catch((error) => {
-      displayError(error);
+      console.error(error.message);
     })
     .finally(() => {
-      closeDB();
+      runPromise(deleteTableSQL).then(() => {
+        closePromise();
+      });
     });
 }
 
-main();
+main(titles);

@@ -14,6 +14,11 @@ const runPromise = (sql, params = []) => {
   });
 };
 
+const runMultiplePromise = (sql, params) => {
+  const promises = params.map((param) => runPromise(sql, [param]));
+  return Promise.all(promises);
+};
+
 const allPromise = (sql, params = []) => {
   return new Promise((resolve, reject) => {
     db.all(sql, params, function (error, rows) {
@@ -38,4 +43,4 @@ const closePromise = () => {
   });
 };
 
-export { runPromise, allPromise, closePromise };
+export { runPromise, runMultiplePromise, allPromise, closePromise };
