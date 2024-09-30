@@ -3,55 +3,28 @@ import {
   runPromise,
   allPromise,
   closePromise,
+  runMultiplePromise,
 } from "../db/promiseFunctions.js";
 import {
   createTableSQL,
-  createBooksSQL,
-  getBooksSQL,
+  insertBookSQL,
+  fetchBookSQL,
   deleteTableSQL,
 } from "../db/queries.js";
-
-const titles = ["書籍1", "書籍2", "書籍3"];
-
-const createTable = async () => {
-  return runPromise(createTableSQL);
-};
-
-const createBooks = async (titles, index = 0) => {
-  if (titles.length === index) {
-    return;
-  }
-
-  const result = await runPromise(createBooksSQL, [titles[index]]);
-  console.log(`ID: ${result.lastID} created.`);
-  return createBooks(titles, index + 1);
-};
-
-const getBooks = async () => {
-  return allPromise(getBooksSQL);
-};
-
-const displayBooks = (books) => {
-  books.forEach((book) => {
-    console.log(`ID: ${book.id}, Title: ${book.title}`);
-  });
-};
-
-const deleteTable = async () => {
-  return runPromise(deleteTableSQL);
-};
-
-const closeDB = async () => {
-  return closePromise();
-};
+import { titles } from "../db/constants.js";
 
 async function main() {
-  await createTable();
-  await createBooks(titles);
-  const books = await getBooks();
-  displayBooks(books);
-  await deleteTable();
-  await closeDB();
+  await runPromise(createTableSQL);
+  const insertedBooks = await runMultiplePromise(insertBookSQL, titles);
+  insertedBooks.forEach((insertedBook) => {
+    console.log(`ID: ${insertedBook.lastID} created.`);
+  });
+  const fetchedBooks = await allPromise(fetchBookSQL);
+  fetchedBooks.forEach((fetchedBook) => {
+    console.log(`ID: ${fetchedBook.id}, Title: ${fetchedBook.title}`);
+  });
+  await runPromise(deleteTableSQL);
+  await closePromise();
 }
 
 main();
