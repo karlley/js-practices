@@ -6,11 +6,11 @@ import {
   invalidFetchBookSQL,
   deleteTableSQL,
 } from "../db/queries.js";
+import { titles } from "../db/constants.js";
 
 const db = new sqlite3.Database(":memory:");
-const titles = ["書籍1", "書籍2", "書籍3"];
 
-function main(titles) {
+function main() {
   db.run(createTableSQL, () => {
     let createdCount = 0;
     for (let index = 0; index < titles.length; index++) {
@@ -41,4 +41,4 @@ function main(titles) {
   });
 }
 
-main(titles);
+main();

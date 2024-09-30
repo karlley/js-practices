@@ -11,10 +11,9 @@ import {
   fetchBookSQL,
   deleteTableSQL,
 } from "../db/queries.js";
+import { titles } from "../db/constants.js";
 
-const titles = ["書籍1", "書籍2", "書籍3"];
-
-function main(titles) {
+function main() {
   runPromise(createTableSQL)
     .then(() => {
       return runMultiplePromise(insertBookSQL, titles);
@@ -39,4 +38,4 @@ function main(titles) {
     });
 }
 
-main(titles);
+main();

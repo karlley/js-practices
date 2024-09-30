@@ -11,18 +11,21 @@ import {
   invalidFetchBookSQL,
   deleteTableSQL,
 } from "../db/queries.js";
+import { titles } from "../db/constants.js";
 
-const titles = ["書籍1", "書籍2", "書籍3"];
-
-function main(titles) {
+function main() {
   runPromise(createTableSQL)
     .then(() => {
       return runMultiplePromise(invalidInsertBookSQL, titles);
     })
     .then((insertedBooks) => {
-      insertedBooks.forEach((insertedBook) => {
-        console.log(`ID: ${insertedBook.lastID} created.`);
-      });
+      if (insertedBooks.length === 0) {
+        console.log("Books not found.");
+      } else {
+        insertedBooks.forEach((insertedBook) => {
+          console.log(`ID: ${insertedBook.lastID} created.`);
+        });
+      }
     })
     .catch((error) => {
       console.error(error.message);
@@ -50,4 +53,4 @@ function main(titles) {
     });
 }
 
-main(titles);
+main();
