@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import sqlite3 from "sqlite3";
+import { db } from "../db/database.js";
 import {
   createTableSQL,
   invalidInsertBookSQL,
@@ -7,8 +7,6 @@ import {
   deleteTableSQL,
 } from "../db/queries.js";
 import { titles } from "../db/constants.js";
-
-const db = new sqlite3.Database(":memory:");
 
 function main() {
   db.run(createTableSQL, () => {

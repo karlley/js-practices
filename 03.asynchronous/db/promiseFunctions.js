@@ -1,6 +1,4 @@
-import sqlite3 from "sqlite3";
-
-const db = new sqlite3.Database(":memory:");
+import { db } from "./database.js";
 
 const runPromise = (sql, params = []) => {
   return new Promise((resolve, reject) => {
