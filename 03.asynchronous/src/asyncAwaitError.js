@@ -29,7 +29,7 @@ async function main() {
       });
     }
   } catch (error) {
-    console.error(`Error: ${error.message}`);
+    console.error(`Insert failed: ${error.message}`);
   }
 
   try {
@@ -42,7 +42,7 @@ async function main() {
       });
     }
   } catch (error) {
-    console.error(`Error: ${error.message}`);
+    console.error(`Fetch failed: ${error.message}`);
   }
 
   await runPromise(deleteTableSQL);

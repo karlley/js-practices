@@ -14,7 +14,7 @@ function main() {
     for (let index = 0; index < titles.length; index++) {
       db.run(invalidInsertBookSQL, titles[index], function (error) {
         if (error) {
-          console.error(`Error: ${error.message}`);
+          console.error(`Insert failed: ${error.message}`);
         } else {
           console.log(`ID: ${this.lastID} created.`);
         }
@@ -23,7 +23,7 @@ function main() {
         if (createdCount === titles.length) {
           db.all(invalidFetchBookSQL, (error, books) => {
             if (error) {
-              console.error(`Error: ${error.message}`);
+              console.error(`Fetch failed: ${error.message}`);
             } else {
               books.forEach((book) => {
                 console.log(`ID: ${book.id}, Title: ${book.title}`);

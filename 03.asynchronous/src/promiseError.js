@@ -28,7 +28,7 @@ function main() {
       }
     })
     .catch((error) => {
-      console.error(error.message);
+      console.error(`Insert failed: ${error.message}`);
       return Promise.resolve([]);
     })
     .then(() => {
@@ -44,7 +44,7 @@ function main() {
       }
     })
     .catch((error) => {
-      console.error(error.message);
+      console.error(`Fetch failed: ${error.message}`);
     })
     .finally(() => {
       runPromise(deleteTableSQL).then(() => {
