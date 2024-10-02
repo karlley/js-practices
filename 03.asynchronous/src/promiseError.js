@@ -47,8 +47,8 @@ function main() {
       console.error(`Fetch failed: ${error.message}`);
     })
     .finally(() => {
-      runPromise(deleteTableSQL).then(() => {
-        closePromise();
+      return runPromise(deleteTableSQL).then(() => {
+        return closePromise();
       });
     });
 }

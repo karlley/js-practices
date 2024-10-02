@@ -27,4 +27,6 @@ async function main() {
   await closePromise();
 }
 
-main();
+(async () => {
+  await main();
+})();

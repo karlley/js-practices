@@ -31,10 +31,11 @@ function main() {
         console.log(`ID: ${fetchedBook.id}, Title: ${fetchedBook.title}`);
       });
     })
-    .finally(() => {
-      runPromise(deleteTableSQL).then(() => {
-        closePromise();
-      });
+    .then(() => {
+      return runPromise(deleteTableSQL);
+    })
+    .then(() => {
+      return closePromise();
     });
 }
 
