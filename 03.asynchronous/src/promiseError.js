@@ -8,8 +8,8 @@ import {
 import {
   createTableSQL,
   invalidInsertBookSQL,
-  invalidFetchBookSQL,
-  deleteTableSQL,
+  invalidSelectBookSQL,
+  dropTableSQL,
 } from "../db/queries.js";
 import { titles } from "../db/titles.js";
 
@@ -32,22 +32,22 @@ function main() {
       return Promise.resolve([]);
     })
     .then(() => {
-      return allPromise(invalidFetchBookSQL);
+      return allPromise(invalidSelectBookSQL);
     })
-    .then((fetchedBooks) => {
-      if (fetchedBooks.length === 0) {
+    .then((selectedBooks) => {
+      if (selectedBooks.length === 0) {
         console.log("Books not found.");
       } else {
-        fetchedBooks.forEach((fetchedBook) => {
-          console.log(`ID: ${fetchedBook.id}, Title: ${fetchedBook.title}`);
+        selectedBooks.forEach((selectedBook) => {
+          console.log(`ID: ${selectedBook.id}, Title: ${selectedBook.title}`);
         });
       }
     })
     .catch((error) => {
-      console.error(`Fetch failed: ${error.message}`);
+      console.error(`Select failed: ${error.message}`);
     })
     .finally(() => {
-      return runPromise(deleteTableSQL).then(() => {
+      return runPromise(dropTableSQL).then(() => {
         return closePromise();
       });
     });

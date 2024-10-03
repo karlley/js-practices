@@ -3,8 +3,8 @@ import { db } from "../db/database.js";
 import {
   createTableSQL,
   invalidInsertBookSQL,
-  invalidFetchBookSQL,
-  deleteTableSQL,
+  invalidSelectBookSQL,
+  dropTableSQL,
 } from "../db/queries.js";
 import { titles } from "../db/titles.js";
 
@@ -16,20 +16,20 @@ function main() {
         if (error) {
           console.error(`Insert failed: ${error.message}`);
         } else {
-          console.log(`ID: ${this.lastID} created.`);
+          console.log(`ID: ${this.lastID} inserted.`);
         }
         createdCount++;
 
         if (createdCount === titles.length) {
-          db.all(invalidFetchBookSQL, (error, books) => {
+          db.all(invalidSelectBookSQL, (error, books) => {
             if (error) {
-              console.error(`Fetch failed: ${error.message}`);
+              console.error(`Select failed: ${error.message}`);
             } else {
               books.forEach((book) => {
                 console.log(`ID: ${book.id}, Title: ${book.title}`);
               });
             }
-            db.run(deleteTableSQL, () => {
+            db.run(dropTableSQL, () => {
               db.close();
             });
           });

@@ -7,17 +7,17 @@ const insertBookSQL = `INSERT INTO Books (title)
                        VALUES (?)`;
 const invalidInsertBookSQL = `INSERT INTO InvalidTable (title)
                               VALUES (?)`;
-const fetchBookSQL = `SELECT *
-                      FROM Books`;
-const invalidFetchBookSQL = `SELECT *
-                             FROM InvalidTable`;
-const deleteTableSQL = `DROP TABLE Books`;
+const selectBookSQL = `SELECT *
+                       FROM Books`;
+const invalidSelectBookSQL = `SELECT *
+                              FROM InvalidTable`;
+const dropTableSQL = `DROP TABLE Books`;
 
 export {
   createTableSQL,
   insertBookSQL,
   invalidInsertBookSQL,
-  fetchBookSQL,
-  invalidFetchBookSQL,
-  deleteTableSQL,
+  selectBookSQL,
+  invalidSelectBookSQL,
+  dropTableSQL,
 };

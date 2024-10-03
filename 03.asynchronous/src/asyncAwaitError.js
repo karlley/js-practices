@@ -8,8 +8,8 @@ import {
 import {
   createTableSQL,
   invalidInsertBookSQL,
-  invalidFetchBookSQL,
-  deleteTableSQL,
+  invalidSelectBookSQL,
+  dropTableSQL,
 } from "../db/queries.js";
 import { titles } from "../db/titles.js";
 
@@ -33,19 +33,19 @@ async function main() {
   }
 
   try {
-    const fetchedBooks = await allPromise(invalidFetchBookSQL);
-    if (fetchedBooks.length === 0) {
+    const selectedBooks = await allPromise(invalidSelectBookSQL);
+    if (selectedBooks.length === 0) {
       console.log("Books not found.");
     } else {
-      fetchedBooks.forEach((fetchedBook) => {
-        console.log(`ID: ${fetchedBook.id}, Title: ${fetchedBook.title}`);
+      selectedBooks.forEach((selectedBook) => {
+        console.log(`ID: ${selectedBook.id}, Title: ${selectedBook.title}`);
       });
     }
   } catch (error) {
-    console.error(`Fetch failed: ${error.message}`);
+    console.error(`Select failed: ${error.message}`);
   }
 
-  await runPromise(deleteTableSQL);
+  await runPromise(dropTableSQL);
   await closePromise();
 }
 

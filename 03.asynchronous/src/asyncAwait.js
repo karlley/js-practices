@@ -8,8 +8,8 @@ import {
 import {
   createTableSQL,
   insertBookSQL,
-  fetchBookSQL,
-  deleteTableSQL,
+  selectBookSQL,
+  dropTableSQL,
 } from "../db/queries.js";
 import { titles } from "../db/titles.js";
 
@@ -17,13 +17,13 @@ async function main() {
   await runPromise(createTableSQL);
   const insertedBooks = await runMultiplePromise(insertBookSQL, titles);
   insertedBooks.forEach((insertedBook) => {
-    console.log(`ID: ${insertedBook.lastID} created.`);
+    console.log(`ID: ${insertedBook.lastID} inserted.`);
   });
-  const fetchedBooks = await allPromise(fetchBookSQL);
-  fetchedBooks.forEach((fetchedBook) => {
-    console.log(`ID: ${fetchedBook.id}, Title: ${fetchedBook.title}`);
+  const selectedBooks = await allPromise(selectBookSQL);
+  selectedBooks.forEach((selectedBook) => {
+    console.log(`ID: ${selectedBook.id}, Title: ${selectedBook.title}`);
   });
-  await runPromise(deleteTableSQL);
+  await runPromise(dropTableSQL);
   await closePromise();
 }
 

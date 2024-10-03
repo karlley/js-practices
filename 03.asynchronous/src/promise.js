@@ -8,8 +8,8 @@ import {
 import {
   createTableSQL,
   insertBookSQL,
-  fetchBookSQL,
-  deleteTableSQL,
+  selectBookSQL,
+  dropTableSQL,
 } from "../db/queries.js";
 import { titles } from "../db/titles.js";
 
@@ -20,19 +20,19 @@ function main() {
     })
     .then((insertedBooks) => {
       insertedBooks.forEach((insertedBook) => {
-        console.log(`ID: ${insertedBook.lastID} created.`);
+        console.log(`ID: ${insertedBook.lastID} inserted.`);
       });
     })
     .then(() => {
-      return allPromise(fetchBookSQL);
+      return allPromise(selectBookSQL);
     })
-    .then((fetchedBooks) => {
-      fetchedBooks.forEach((fetchedBook) => {
-        console.log(`ID: ${fetchedBook.id}, Title: ${fetchedBook.title}`);
+    .then((selectedBooks) => {
+      selectedBooks.forEach((selectedBook) => {
+        console.log(`ID: ${selectedBook.id}, Title: ${selectedBook.title}`);
       });
     })
     .then(() => {
-      return runPromise(deleteTableSQL);
+      return runPromise(dropTableSQL);
     })
     .then(() => {
       return closePromise();
