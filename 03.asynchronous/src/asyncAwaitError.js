@@ -11,7 +11,7 @@ import {
   invalidFetchBookSQL,
   deleteTableSQL,
 } from "../db/queries.js";
-import { titles } from "../db/constants.js";
+import { titles } from "../db/titles.js";
 
 async function main() {
   await runPromise(createTableSQL);

@@ -11,7 +11,7 @@ import {
   fetchBookSQL,
   deleteTableSQL,
 } from "../db/queries.js";
-import { titles } from "../db/constants.js";
+import { titles } from "../db/titles.js";
 
 function main() {
   runPromise(createTableSQL)
