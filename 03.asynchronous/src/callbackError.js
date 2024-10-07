@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 import { db } from "../db/database.js";
 import {
   createTableSQL,
