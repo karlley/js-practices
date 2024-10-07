@@ -10,32 +10,48 @@ import { titles } from "../db/titles.js";
 
 function main() {
   db.run(createTableSQL, () => {
-    let createdCount = 0;
-    for (let index = 0; index < titles.length; index++) {
-      db.run(invalidInsertBookSQL, titles[index], function (error) {
+    db.run(invalidInsertBookSQL, titles[0], function (error) {
+      if (error) {
+        console.error(`Insert failed: ${error.message}`);
+      } else {
+        console.log(`ID: ${this.lastID} inserted.`);
+      }
+
+      db.run(invalidInsertBookSQL, titles[1], function (error) {
         if (error) {
           console.error(`Insert failed: ${error.message}`);
         } else {
           console.log(`ID: ${this.lastID} inserted.`);
         }
-        createdCount++;
 
-        if (createdCount === titles.length) {
-          db.all(invalidSelectBookSQL, (error, books) => {
+        db.run(invalidInsertBookSQL, titles[2], function (error) {
+          if (error) {
+            console.error(`Insert failed: ${error.message}`);
+          } else {
+            console.log(`ID: ${this.lastID} inserted.`);
+          }
+
+          db.all(invalidSelectBookSQL, (error, selectedBooks) => {
             if (error) {
               console.error(`Select failed: ${error.message}`);
             } else {
-              books.forEach((book) => {
-                console.log(`ID: ${book.id}, Title: ${book.title}`);
-              });
+              if (selectedBooks.length === 0) {
+                console.log("Books not found.");
+              } else {
+                selectedBooks.forEach((selectedBook) => {
+                  console.log(
+                    `ID: ${selectedBook.id}, Title: ${selectedBook.title}`,
+                  );
+                });
+              }
             }
             db.run(dropTableSQL, () => {
               db.close();
             });
           });
-        }
+        });
       });
-    }
+    });
   });
 }
 

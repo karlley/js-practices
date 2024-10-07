@@ -10,24 +10,28 @@ import { titles } from "../db/titles.js";
 
 function main() {
   db.run(createTableSQL, () => {
-    let createdCount = 0;
-    for (let index = 0; index < titles.length; index++) {
-      db.run(insertBookSQL, titles[index], function () {
-        console.log(`ID: ${this.lastID} inserted.`);
-        createdCount++;
+    db.run(insertBookSQL, titles[0], function () {
+      console.log(`ID: ${this.lastID} inserted.`);
 
-        if (createdCount === titles.length) {
-          db.all(selectBookSQL, (_, books) => {
-            books.forEach((book) => {
-              console.log(`ID: ${book.id}, Title: ${book.title}`);
+      db.run(insertBookSQL, titles[1], function () {
+        console.log(`ID: ${this.lastID} inserted.`);
+
+        db.run(insertBookSQL, titles[2], function () {
+          console.log(`ID: ${this.lastID} inserted.`);
+
+          db.all(selectBookSQL, (_, selectedBooks) => {
+            selectedBooks.forEach((selectedBook) => {
+              console.log(
+                `ID: ${selectedBook.id}, Title: ${selectedBook.title}`,
+              );
             });
             db.run(dropTableSQL, () => {
               db.close();
             });
           });
-        }
+        });
       });
-    }
+    });
   });
 }
 
