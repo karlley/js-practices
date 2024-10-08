@@ -3,7 +3,6 @@
 import { db } from "../db/database.js";
 import {
   runPromise,
-  runMultiplePromise,
   allPromise,
   closePromise,
 } from "../db/promiseFunctions.js";
@@ -18,7 +17,10 @@ import { titles } from "../db/titles.js";
 function main() {
   runPromise(db, createTableSQL)
     .then(() => {
-      return runMultiplePromise(db, insertBookSQL, titles);
+      const insertedBooks = titles.map((title) => {
+        return runPromise(db, insertBookSQL, [title]);
+      });
+      return Promise.all(insertedBooks);
     })
     .then((insertedBooks) => {
       insertedBooks.forEach((insertedBook) => {

@@ -5,7 +5,6 @@ import {
   runPromise,
   allPromise,
   closePromise,
-  runMultiplePromise,
 } from "../db/promiseFunctions.js";
 import {
   createTableSQL,
@@ -18,7 +17,10 @@ import { titles } from "../db/titles.js";
 function main() {
   runPromise(db, createTableSQL)
     .then(() => {
-      return runMultiplePromise(db, invalidInsertBookSQL, titles);
+      const insertedBooks = titles.map((title) => {
+        return runPromise(db, invalidInsertBookSQL, [title]);
+      });
+      return Promise.all(insertedBooks);
     })
     .then((insertedBooks) => {
       if (insertedBooks.length === 0) {

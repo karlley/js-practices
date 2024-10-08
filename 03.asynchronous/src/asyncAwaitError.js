@@ -5,7 +5,6 @@ import {
   runPromise,
   allPromise,
   closePromise,
-  runMultiplePromise,
 } from "../db/promiseFunctions.js";
 import {
   createTableSQL,
@@ -19,10 +18,10 @@ async function main() {
   await runPromise(db, createTableSQL);
 
   try {
-    const insertedBooks = await runMultiplePromise(
-      db,
-      invalidInsertBookSQL,
-      titles,
+    const insertedBooks = await Promise.all(
+      titles.map((title) => {
+        return runPromise(db, invalidInsertBookSQL, [title]);
+      }),
     );
     if (insertedBooks.length === 0) {
       console.log("Books not found.");

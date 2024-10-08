@@ -5,7 +5,6 @@ import {
   runPromise,
   allPromise,
   closePromise,
-  runMultiplePromise,
 } from "../db/promiseFunctions.js";
 import {
   createTableSQL,
@@ -17,7 +16,11 @@ import { titles } from "../db/titles.js";
 
 async function main() {
   await runPromise(db, createTableSQL);
-  const insertedBooks = await runMultiplePromise(db, insertBookSQL, titles);
+  const insertedBooks = await Promise.all(
+    titles.map((title) => {
+      return runPromise(db, insertBookSQL, [title]);
+    }),
+  );
   insertedBooks.forEach((insertedBook) => {
     console.log(`ID: ${insertedBook.lastID} inserted.`);
   });
