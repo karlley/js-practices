@@ -17,7 +17,7 @@ const runMultiplePromise = (db, sql, params) => {
 
 const allPromise = (db, sql, params = []) => {
   return new Promise((resolve, reject) => {
-    db.all(sql, params, function (error, rows) {
+    db.all(sql, params, (error, rows) => {
       if (error) {
         reject(error);
       } else {
@@ -29,11 +29,11 @@ const allPromise = (db, sql, params = []) => {
 
 const closePromise = (db) => {
   return new Promise((resolve, reject) => {
-    db.close(function (error) {
+    db.close((error) => {
       if (error) {
         reject(error);
       } else {
-        resolve(null);
+        resolve();
       }
     });
   });
