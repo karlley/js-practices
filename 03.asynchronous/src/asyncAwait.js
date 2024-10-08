@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { db } from "../db/database.js";
 import {
   runPromise,
   allPromise,
@@ -15,17 +16,17 @@ import {
 import { titles } from "../db/titles.js";
 
 async function main() {
-  await runPromise(createTableSQL);
-  const insertedBooks = await runMultiplePromise(insertBookSQL, titles);
+  await runPromise(db, createTableSQL);
+  const insertedBooks = await runMultiplePromise(db, insertBookSQL, titles);
   insertedBooks.forEach((insertedBook) => {
     console.log(`ID: ${insertedBook.lastID} inserted.`);
   });
-  const selectedBooks = await allPromise(selectBookSQL);
+  const selectedBooks = await allPromise(db, selectBookSQL);
   selectedBooks.forEach((selectedBook) => {
     console.log(`ID: ${selectedBook.id}, Title: ${selectedBook.title}`);
   });
-  await runPromise(dropTableSQL);
-  await closePromise();
+  await runPromise(db, dropTableSQL);
+  await closePromise(db);
 }
 
 (async () => {

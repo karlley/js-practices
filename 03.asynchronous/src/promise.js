@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { db } from "../db/database.js";
 import {
   runPromise,
   runMultiplePromise,
@@ -15,9 +16,9 @@ import {
 import { titles } from "../db/titles.js";
 
 function main() {
-  runPromise(createTableSQL)
+  runPromise(db, createTableSQL)
     .then(() => {
-      return runMultiplePromise(insertBookSQL, titles);
+      return runMultiplePromise(db, insertBookSQL, titles);
     })
     .then((insertedBooks) => {
       insertedBooks.forEach((insertedBook) => {
@@ -25,7 +26,7 @@ function main() {
       });
     })
     .then(() => {
-      return allPromise(selectBookSQL);
+      return allPromise(db, selectBookSQL);
     })
     .then((selectedBooks) => {
       selectedBooks.forEach((selectedBook) => {
@@ -33,10 +34,10 @@ function main() {
       });
     })
     .then(() => {
-      return runPromise(dropTableSQL);
+      return runPromise(db, dropTableSQL);
     })
     .then(() => {
-      return closePromise();
+      return closePromise(db);
     });
 }
 

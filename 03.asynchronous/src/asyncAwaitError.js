@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { db } from "../db/database.js";
 import {
   runPromise,
   allPromise,
@@ -15,10 +16,11 @@ import {
 import { titles } from "../db/titles.js";
 
 async function main() {
-  await runPromise(createTableSQL);
+  await runPromise(db, createTableSQL);
 
   try {
     const insertedBooks = await runMultiplePromise(
+      db,
       invalidInsertBookSQL,
       titles,
     );
@@ -34,7 +36,7 @@ async function main() {
   }
 
   try {
-    const selectedBooks = await allPromise(invalidSelectBookSQL);
+    const selectedBooks = await allPromise(db, invalidSelectBookSQL);
     if (selectedBooks.length === 0) {
       console.log("Books not found.");
     } else {
@@ -46,8 +48,8 @@ async function main() {
     console.error(`Select failed: ${error.message}`);
   }
 
-  await runPromise(dropTableSQL);
-  await closePromise();
+  await runPromise(db, dropTableSQL);
+  await closePromise(db);
 }
 
 (async () => {

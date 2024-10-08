@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { db } from "../db/database.js";
 import {
   runPromise,
   allPromise,
@@ -15,9 +16,9 @@ import {
 import { titles } from "../db/titles.js";
 
 function main() {
-  runPromise(createTableSQL)
+  runPromise(db, createTableSQL)
     .then(() => {
-      return runMultiplePromise(invalidInsertBookSQL, titles);
+      return runMultiplePromise(db, invalidInsertBookSQL, titles);
     })
     .then((insertedBooks) => {
       if (insertedBooks.length === 0) {
@@ -33,7 +34,7 @@ function main() {
       return Promise.resolve([]);
     })
     .then(() => {
-      return allPromise(invalidSelectBookSQL);
+      return allPromise(db, invalidSelectBookSQL);
     })
     .then((selectedBooks) => {
       if (selectedBooks.length === 0) {
@@ -48,8 +49,8 @@ function main() {
       console.error(`Select failed: ${error.message}`);
     })
     .finally(() => {
-      return runPromise(dropTableSQL).then(() => {
-        return closePromise();
+      return runPromise(db, dropTableSQL).then(() => {
+        return closePromise(db);
       });
     });
 }

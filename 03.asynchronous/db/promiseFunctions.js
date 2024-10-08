@@ -1,6 +1,4 @@
-import { db } from "./database.js";
-
-const runPromise = (sql, params = []) => {
+const runPromise = (db, sql, params = []) => {
   return new Promise((resolve, reject) => {
     db.run(sql, params, function (error) {
       if (error) {
@@ -12,12 +10,12 @@ const runPromise = (sql, params = []) => {
   });
 };
 
-const runMultiplePromise = (sql, params) => {
-  const promises = params.map((param) => runPromise(sql, [param]));
+const runMultiplePromise = (db, sql, params) => {
+  const promises = params.map((param) => runPromise(db, sql, [param]));
   return Promise.all(promises);
 };
 
-const allPromise = (sql, params = []) => {
+const allPromise = (db, sql, params = []) => {
   return new Promise((resolve, reject) => {
     db.all(sql, params, function (error, rows) {
       if (error) {
@@ -29,7 +27,7 @@ const allPromise = (sql, params = []) => {
   });
 };
 
-const closePromise = () => {
+const closePromise = (db) => {
   return new Promise((resolve, reject) => {
     db.close(function (error) {
       if (error) {
