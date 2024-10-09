@@ -17,9 +17,7 @@ import { titles } from "../db/titles.js";
 async function main() {
   await runPromise(db, createTableSQL);
   const insertedBooks = await Promise.all(
-    titles.map((title) => {
-      return runPromise(db, insertBookSQL, [title]);
-    }),
+    titles.map((title) => runPromise(db, insertBookSQL, [title])),
   );
   insertedBooks.forEach((insertedBook) => {
     console.log(`ID: ${insertedBook.lastID} inserted.`);

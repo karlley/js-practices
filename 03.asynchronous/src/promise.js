@@ -17,9 +17,9 @@ import { titles } from "../db/titles.js";
 function main() {
   runPromise(db, createTableSQL)
     .then(() => {
-      const insertedBooks = titles.map((title) => {
-        return runPromise(db, insertBookSQL, [title]);
-      });
+      const insertedBooks = titles.map((title) =>
+        runPromise(db, insertBookSQL, [title]),
+      );
       return Promise.all(insertedBooks);
     })
     .then((insertedBooks) => {
@@ -27,20 +27,14 @@ function main() {
         console.log(`ID: ${insertedBook.lastID} inserted.`);
       });
     })
-    .then(() => {
-      return allPromise(db, selectBookSQL);
-    })
+    .then(() => allPromise(db, selectBookSQL))
     .then((selectedBooks) => {
       selectedBooks.forEach((selectedBook) => {
         console.log(`ID: ${selectedBook.id}, Title: ${selectedBook.title}`);
       });
     })
-    .then(() => {
-      return runPromise(db, dropTableSQL);
-    })
-    .then(() => {
-      return closePromise(db);
-    });
+    .then(() => runPromise(db, dropTableSQL))
+    .then(() => closePromise(db));
 }
 
 main();

@@ -17,9 +17,9 @@ import { titles } from "../db/titles.js";
 function main() {
   runPromise(db, createTableSQL)
     .then(() => {
-      const insertedBooks = titles.map((title) => {
-        return runPromise(db, invalidInsertBookSQL, [title]);
-      });
+      const insertedBooks = titles.map((title) =>
+        runPromise(db, invalidInsertBookSQL, [title]),
+      );
       return Promise.all(insertedBooks);
     })
     .then((insertedBooks) => {
@@ -35,9 +35,7 @@ function main() {
       console.error(`Insert failed: ${error.message}`);
       return Promise.resolve([]);
     })
-    .then(() => {
-      return allPromise(db, invalidSelectBookSQL);
-    })
+    .then(() => allPromise(db, invalidSelectBookSQL))
     .then((selectedBooks) => {
       if (selectedBooks.length === 0) {
         console.log("Books not found.");
@@ -50,11 +48,7 @@ function main() {
     .catch((error) => {
       console.error(`Select failed: ${error.message}`);
     })
-    .finally(() => {
-      return runPromise(db, dropTableSQL).then(() => {
-        return closePromise(db);
-      });
-    });
+    .finally(() => runPromise(db, dropTableSQL).then(() => closePromise(db)));
 }
 
 main();

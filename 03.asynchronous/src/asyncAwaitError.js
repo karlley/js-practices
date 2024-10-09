@@ -19,9 +19,7 @@ async function main() {
 
   try {
     const insertedBooks = await Promise.all(
-      titles.map((title) => {
-        return runPromise(db, invalidInsertBookSQL, [title]);
-      }),
+      titles.map((title) => runPromise(db, invalidInsertBookSQL, [title])),
     );
     if (insertedBooks.length === 0) {
       console.log("Books not found.");
