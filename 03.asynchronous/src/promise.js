@@ -26,14 +26,14 @@ function main() {
       insertedBooks.forEach((insertedBook) => {
         console.log(`ID: ${insertedBook.lastID} inserted.`);
       });
+      return allPromise(db, selectBookSQL);
     })
-    .then(() => allPromise(db, selectBookSQL))
     .then((selectedBooks) => {
       selectedBooks.forEach((selectedBook) => {
         console.log(`ID: ${selectedBook.id}, Title: ${selectedBook.title}`);
       });
+      return runPromise(db, dropTableSQL);
     })
-    .then(() => runPromise(db, dropTableSQL))
     .then(() => closePromise(db));
 }
 

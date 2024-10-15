@@ -20,7 +20,10 @@ function main() {
       const insertedBooks = titles.map((title) =>
         runPromise(db, invalidInsertBookSQL, [title]),
       );
-      return Promise.all(insertedBooks);
+      return Promise.all(insertedBooks).catch((error) => {
+        console.error(`Insert failed: ${error.message}`);
+        return [];
+      });
     })
     .then((insertedBooks) => {
       if (insertedBooks.length === 0) {
@@ -30,12 +33,11 @@ function main() {
           console.log(`ID: ${insertedBook.lastID} created.`);
         });
       }
+      return allPromise(db, invalidSelectBookSQL).catch((error) => {
+        console.error(`Select failed: ${error.message}`);
+        return [];
+      });
     })
-    .catch((error) => {
-      console.error(`Insert failed: ${error.message}`);
-      return Promise.resolve([]);
-    })
-    .then(() => allPromise(db, invalidSelectBookSQL))
     .then((selectedBooks) => {
       if (selectedBooks.length === 0) {
         console.log("Books not found.");
@@ -44,11 +46,9 @@ function main() {
           console.log(`ID: ${selectedBook.id}, Title: ${selectedBook.title}`);
         });
       }
+      return runPromise(db, dropTableSQL);
     })
-    .catch((error) => {
-      console.error(`Select failed: ${error.message}`);
-    })
-    .finally(() => runPromise(db, dropTableSQL).then(() => closePromise(db)));
+    .then(() => closePromise(db));
 }
 
 main();
