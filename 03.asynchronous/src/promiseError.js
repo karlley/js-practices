@@ -17,37 +17,35 @@ import { titles } from "../db/titles.js";
 function main() {
   runPromise(db, createTableSQL)
     .then(() => {
-      const insertedBooks = titles.map((title) =>
-        runPromise(db, invalidInsertBookSQL, [title]),
-      );
-      return Promise.all(insertedBooks).catch((error) => {
-        console.error(`Insert failed: ${error.message}`);
-        return [];
+      const insertedBooks = titles.map((title) => {
+        return runPromise(db, invalidInsertBookSQL, [title])
+          .then((insertedBook) => {
+            console.log(`ID: ${insertedBook.lastID} created.`);
+          })
+          .catch((error) => {
+            console.error(`Insert failed: ${error.message}`);
+          });
       });
+      return Promise.all(insertedBooks);
     })
-    .then((insertedBooks) => {
-      if (insertedBooks.length === 0) {
-        console.log("Books not found.");
-      } else {
-        insertedBooks.forEach((insertedBook) => {
-          console.log(`ID: ${insertedBook.lastID} created.`);
+    .then(() => {
+      return allPromise(db, invalidSelectBookSQL)
+        .then((selectedBooks) => {
+          if (selectedBooks.length === 0) {
+            console.log("Books not found.");
+          } else {
+            selectedBooks.forEach((selectedBook) => {
+              console.log(
+                `ID: ${selectedBook.id}, Title: ${selectedBook.title}`,
+              );
+            });
+          }
+        })
+        .catch((error) => {
+          console.error(`Select failed: ${error.message}`);
         });
-      }
-      return allPromise(db, invalidSelectBookSQL).catch((error) => {
-        console.error(`Select failed: ${error.message}`);
-        return [];
-      });
     })
-    .then((selectedBooks) => {
-      if (selectedBooks.length === 0) {
-        console.log("Books not found.");
-      } else {
-        selectedBooks.forEach((selectedBook) => {
-          console.log(`ID: ${selectedBook.id}, Title: ${selectedBook.title}`);
-        });
-      }
-      return runPromise(db, dropTableSQL);
-    })
+    .then(() => runPromise(db, dropTableSQL))
     .then(() => closePromise(db));
 }
 

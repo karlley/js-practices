@@ -17,23 +17,21 @@ import { titles } from "../db/titles.js";
 function main() {
   runPromise(db, createTableSQL)
     .then(() => {
-      const insertedBooks = titles.map((title) =>
-        runPromise(db, insertBookSQL, [title]),
-      );
+      const insertedBooks = titles.map((title) => {
+        return runPromise(db, insertBookSQL, [title]).then((insertedBook) => {
+          console.log(`ID: ${insertedBook.lastID} created.`);
+        });
+      });
       return Promise.all(insertedBooks);
     })
-    .then((insertedBooks) => {
-      insertedBooks.forEach((insertedBook) => {
-        console.log(`ID: ${insertedBook.lastID} inserted.`);
+    .then(() => {
+      return allPromise(db, selectBookSQL).then((selectedBooks) => {
+        selectedBooks.forEach((selectedBook) => {
+          console.log(`ID: ${selectedBook.id}, Title: ${selectedBook.title}`);
+        });
       });
-      return allPromise(db, selectBookSQL);
     })
-    .then((selectedBooks) => {
-      selectedBooks.forEach((selectedBook) => {
-        console.log(`ID: ${selectedBook.id}, Title: ${selectedBook.title}`);
-      });
-      return runPromise(db, dropTableSQL);
-    })
+    .then(() => runPromise(db, dropTableSQL))
     .then(() => closePromise(db));
 }
 
