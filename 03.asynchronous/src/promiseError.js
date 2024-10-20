@@ -23,7 +23,11 @@ function main() {
             console.log(`ID: ${insertedBook.lastID} created.`);
           })
           .catch((error) => {
-            console.error(`Insert failed: ${error.message}`);
+            if (error.code === "SQLITE_ERROR") {
+              console.error(`Insert failed: ${error.message}`);
+            } else {
+              throw error;
+            }
           });
       });
       return Promise.all(insertedBooks);
@@ -42,7 +46,11 @@ function main() {
           }
         })
         .catch((error) => {
-          console.error(`Select failed: ${error.message}`);
+          if (error.code === "SQLITE_ERROR") {
+            console.error(`Select failed: ${error.message}`);
+          } else {
+            throw error;
+          }
         });
     })
     .then(() => runPromise(db, dropTableSQL))
