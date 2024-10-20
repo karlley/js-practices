@@ -16,21 +16,22 @@ import { titles } from "../db/titles.js";
 
 async function main() {
   await runPromise(db, createTableSQL);
-
-  try {
-    const insertedBooks = await Promise.all(
-      titles.map((title) => runPromise(db, invalidInsertBookSQL, [title])),
-    );
-    if (insertedBooks.length === 0) {
-      console.log("Books not found.");
-    } else {
-      insertedBooks.forEach((insertedBook) => {
+  await Promise.all(
+    titles.map(async (title) => {
+      try {
+        const insertedBook = await runPromise(db, invalidInsertBookSQL, [
+          title,
+        ]);
         console.log(`ID: ${insertedBook.lastID} created.`);
-      });
-    }
-  } catch (error) {
-    console.error(`Insert failed: ${error.message}`);
-  }
+      } catch (error) {
+        if (error.code === "SQLITE_ERROR") {
+          console.error(`Insert failed: ${error.message}`);
+        } else {
+          throw error;
+        }
+      }
+    }),
+  );
 
   try {
     const selectedBooks = await allPromise(db, invalidSelectBookSQL);
@@ -42,13 +43,15 @@ async function main() {
       });
     }
   } catch (error) {
-    console.error(`Select failed: ${error.message}`);
+    if (error.code === "SQLITE_ERROR") {
+      console.error(`Select failed: ${error.message}`);
+    } else {
+      throw error;
+    }
   }
 
   await runPromise(db, dropTableSQL);
   await closePromise(db);
 }
 
-(async () => {
-  await main();
-})();
+await main();
