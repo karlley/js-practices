@@ -1,16 +1,8 @@
-const createTableSQL =
-  "CREATE TABLE Books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE)";
-const insertBookSQL = "INSERT INTO Books (title) VALUES (?)";
-const invalidInsertBookSQL = "INSERT INTO InvalidTable (title) VALUES (?)";
-const selectBookSQL = "SELECT * FROM Books";
-const invalidSelectBookSQL = "SELECT * FROM InvalidTable";
-const dropTableSQL = "DROP TABLE Books";
-
-export {
-  createTableSQL,
-  insertBookSQL,
-  invalidInsertBookSQL,
-  selectBookSQL,
-  invalidSelectBookSQL,
-  dropTableSQL,
-};
+export const createTableSQL =
+  "create table books (id integer primary key autoincrement, title text unique)";
+export const insertBookSQL = "insert into books (title) values (?)";
+export const invalidInsertBookSQL =
+  "insert into invalidtable (title) values (?)";
+export const selectBookSQL = "select * from books";
+export const invalidSelectBookSQL = "select * from invalidtable";
+export const dropTableSQL = "drop table books";

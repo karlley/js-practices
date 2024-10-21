@@ -1,4 +1,4 @@
-const runPromise = (db, sql, params = []) => {
+export const runPromise = (db, sql, params = []) => {
   return new Promise((resolve, reject) => {
     db.run(sql, params, function (error) {
       if (error) {
@@ -10,7 +10,7 @@ const runPromise = (db, sql, params = []) => {
   });
 };
 
-const allPromise = (db, sql, params = []) => {
+export const allPromise = (db, sql, params = []) => {
   return new Promise((resolve, reject) => {
     db.all(sql, params, (error, rows) => {
       if (error) {
@@ -22,7 +22,7 @@ const allPromise = (db, sql, params = []) => {
   });
 };
 
-const closePromise = (db) => {
+export const closePromise = (db) => {
   return new Promise((resolve, reject) => {
     db.close((error) => {
       if (error) {
@@ -33,5 +33,3 @@ const closePromise = (db) => {
     });
   });
 };
-
-export { runPromise, allPromise, closePromise };
