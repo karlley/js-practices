@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-import { db } from "../db/database.js";
+import { db } from "./db/database.js";
 import {
   createTableSQL,
   insertBookSQL,
   selectBookSQL,
   dropTableSQL,
-} from "../db/queries.js";
-import { titles } from "../db/titles.js";
+} from "./db/queries.js";
+import { titles } from "./db/titles.js";
 
 function main() {
   db.run(createTableSQL, () => {

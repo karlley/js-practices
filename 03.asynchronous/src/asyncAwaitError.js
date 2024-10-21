@@ -1,18 +1,14 @@
 #!/usr/bin/env node
 
-import { db } from "../db/database.js";
-import {
-  runPromise,
-  allPromise,
-  closePromise,
-} from "../db/promiseFunctions.js";
+import { db } from "./db/database.js";
+import { runPromise, allPromise, closePromise } from "./db/promiseFunctions.js";
 import {
   createTableSQL,
   invalidInsertBookSQL,
   invalidSelectBookSQL,
   dropTableSQL,
-} from "../db/queries.js";
-import { titles } from "../db/titles.js";
+} from "./db/queries.js";
+import { titles } from "./db/titles.js";
 
 async function main() {
   await runPromise(db, createTableSQL);
