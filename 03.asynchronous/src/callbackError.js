@@ -32,17 +32,15 @@ function main() {
             console.log(`ID: ${this.lastID} inserted.`);
           }
 
-          db.all(invalidSelectBookSQL, (error, selectedBooks) => {
+          db.all(invalidSelectBookSQL, (error, books) => {
             if (error) {
               console.error(`Select failed: ${error.message}`);
             } else {
-              if (selectedBooks.length === 0) {
+              if (books.length === 0) {
                 console.log("Books not found.");
               } else {
-                selectedBooks.forEach((selectedBook) => {
-                  console.log(
-                    `ID: ${selectedBook.id}, Title: ${selectedBook.title}`,
-                  );
+                books.forEach((book) => {
+                  console.log(`ID: ${book.id}, Title: ${book.title}`);
                 });
               }
             }

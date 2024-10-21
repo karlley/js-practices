@@ -20,11 +20,9 @@ function main() {
         db.run(insertBookSQL, titles[2], function () {
           console.log(`ID: ${this.lastID} inserted.`);
 
-          db.all(selectBookSQL, (_, selectedBooks) => {
-            selectedBooks.forEach((selectedBook) => {
-              console.log(
-                `ID: ${selectedBook.id}, Title: ${selectedBook.title}`,
-              );
+          db.all(selectBookSQL, (_, books) => {
+            books.forEach((book) => {
+              console.log(`ID: ${book.id}, Title: ${book.title}`);
             });
             db.run(dropTableSQL, () => {
               db.close();

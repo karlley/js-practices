@@ -14,13 +14,13 @@ async function main() {
   await runPromise(db, createTableSQL);
   await Promise.all(
     titles.map(async (title) => {
-      const insertedBook = await runPromise(db, insertBookSQL, [title]);
-      console.log(`ID: ${insertedBook.lastID} inserted.`);
+      const book = await runPromise(db, insertBookSQL, [title]);
+      console.log(`ID: ${book.lastID} inserted.`);
     }),
   );
-  const selectedBooks = await allPromise(db, selectBookSQL);
-  selectedBooks.forEach((selectedBook) => {
-    console.log(`ID: ${selectedBook.id}, Title: ${selectedBook.title}`);
+  const books = await allPromise(db, selectBookSQL);
+  books.forEach((book) => {
+    console.log(`ID: ${book.id}, Title: ${book.title}`);
   });
   await runPromise(db, dropTableSQL);
   await closePromise(db);

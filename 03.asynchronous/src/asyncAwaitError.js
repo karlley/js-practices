@@ -15,10 +15,8 @@ async function main() {
   await Promise.all(
     titles.map(async (title) => {
       try {
-        const insertedBook = await runPromise(db, invalidInsertBookSQL, [
-          title,
-        ]);
-        console.log(`ID: ${insertedBook.lastID} created.`);
+        const book = await runPromise(db, invalidInsertBookSQL, [title]);
+        console.log(`ID: ${book.lastID} created.`);
       } catch (error) {
         if (error.code === "SQLITE_ERROR") {
           console.error(`Insert failed: ${error.message}`);
@@ -30,12 +28,12 @@ async function main() {
   );
 
   try {
-    const selectedBooks = await allPromise(db, invalidSelectBookSQL);
-    if (selectedBooks.length === 0) {
+    const books = await allPromise(db, invalidSelectBookSQL);
+    if (books.length === 0) {
       console.log("Books not found.");
     } else {
-      selectedBooks.forEach((selectedBook) => {
-        console.log(`ID: ${selectedBook.id}, Title: ${selectedBook.title}`);
+      books.forEach((book) => {
+        console.log(`ID: ${book.id}, Title: ${book.title}`);
       });
     }
   } catch (error) {

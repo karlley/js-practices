@@ -13,10 +13,10 @@ import { titles } from "./db/titles.js";
 function main() {
   runPromise(db, createTableSQL)
     .then(() => {
-      const insertedBooks = titles.map((title) => {
+      const insertPromises = titles.map((title) => {
         return runPromise(db, invalidInsertBookSQL, [title])
-          .then((insertedBook) => {
-            console.log(`ID: ${insertedBook.lastID} created.`);
+          .then((book) => {
+            console.log(`ID: ${book.lastID} created.`);
           })
           .catch((error) => {
             if (error.code === "SQLITE_ERROR") {
@@ -26,18 +26,16 @@ function main() {
             }
           });
       });
-      return Promise.all(insertedBooks);
+      return Promise.all(insertPromises);
     })
     .then(() => {
       return allPromise(db, invalidSelectBookSQL)
-        .then((selectedBooks) => {
-          if (selectedBooks.length === 0) {
+        .then((books) => {
+          if (books.length === 0) {
             console.log("Books not found.");
           } else {
-            selectedBooks.forEach((selectedBook) => {
-              console.log(
-                `ID: ${selectedBook.id}, Title: ${selectedBook.title}`,
-              );
+            books.forEach((book) => {
+              console.log(`ID: ${book.id}, Title: ${book.title}`);
             });
           }
         })
