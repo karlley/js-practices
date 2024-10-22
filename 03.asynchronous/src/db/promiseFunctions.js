@@ -1,4 +1,4 @@
-export const runPromise = (db, sql, params = []) => {
+export const runPromise = (db, sql, params) => {
   return new Promise((resolve, reject) => {
     db.run(sql, params, function (error) {
       if (error) {
@@ -10,7 +10,7 @@ export const runPromise = (db, sql, params = []) => {
   });
 };
 
-export const allPromise = (db, sql, params = []) => {
+export const allPromise = (db, sql, params) => {
   return new Promise((resolve, reject) => {
     db.all(sql, params, (error, rows) => {
       if (error) {
