@@ -18,7 +18,7 @@ async function main() {
         const book = await runPromise(db, invalidInsertBookSQL, [title]);
         console.log(`ID: ${book.lastID} created.`);
       } catch (error) {
-        if (error.code === "SQLITE_ERROR") {
+        if (error.message.includes("SQLITE_ERROR")) {
           console.error(`Insert failed: ${error.message}`);
         } else {
           throw error;
@@ -33,7 +33,7 @@ async function main() {
       console.log(`ID: ${book.id}, Title: ${book.title}`);
     });
   } catch (error) {
-    if (error.code === "SQLITE_ERROR") {
+    if (error.message.includes("SQLITE_ERROR")) {
       console.error(`Select failed: ${error.message}`);
     } else {
       throw error;

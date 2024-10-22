@@ -19,7 +19,7 @@ function main() {
             console.log(`ID: ${book.lastID} created.`);
           })
           .catch((error) => {
-            if (error.code === "SQLITE_ERROR") {
+            if (error.message.includes("SQLITE_ERROR")) {
               console.error(`Insert failed: ${error.message}`);
             } else {
               throw error;
@@ -36,7 +36,7 @@ function main() {
           });
         })
         .catch((error) => {
-          if (error.code === "SQLITE_ERROR") {
+          if (error.message.includes("SQLITE_ERROR")) {
             console.error(`Select failed: ${error.message}`);
           } else {
             throw error;
