@@ -36,13 +36,9 @@ function main() {
             if (error) {
               console.error(`Select failed: ${error.message}`);
             } else {
-              if (books.length === 0) {
-                console.log("Books not found.");
-              } else {
-                books.forEach((book) => {
-                  console.log(`ID: ${book.id}, Title: ${book.title}`);
-                });
-              }
+              books.forEach((book) => {
+                console.log(`ID: ${book.id}, Title: ${book.title}`);
+              });
             }
             db.run(dropTableSQL, () => {
               db.close();

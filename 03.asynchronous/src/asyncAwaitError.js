@@ -29,13 +29,9 @@ async function main() {
 
   try {
     const books = await allPromise(db, invalidSelectBookSQL);
-    if (books.length === 0) {
-      console.log("Books not found.");
-    } else {
-      books.forEach((book) => {
-        console.log(`ID: ${book.id}, Title: ${book.title}`);
-      });
-    }
+    books.forEach((book) => {
+      console.log(`ID: ${book.id}, Title: ${book.title}`);
+    });
   } catch (error) {
     if (error.code === "SQLITE_ERROR") {
       console.error(`Select failed: ${error.message}`);
