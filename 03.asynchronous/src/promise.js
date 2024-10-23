@@ -12,19 +12,16 @@ import { titles } from "./db/titles.js";
 
 function main() {
   runPromise(db, createTableSQL)
-    .then(() => {
-      const insertPromises = titles.map((title) => {
-        return runPromise(db, insertBookSQL, [title]).then((book) => {
-          console.log(`ID: ${book.lastID} created.`);
-        });
-      });
-      return Promise.all(insertPromises);
-    })
-    .then(() => {
-      return allPromise(db, selectBookSQL).then((books) => {
-        books.forEach((book) => {
-          console.log(`ID: ${book.id}, Title: ${book.title}`);
-        });
+    .then(() => runPromise(db, insertBookSQL, titles[0]))
+    .then((book) => console.log(`ID: ${book.lastID} created.`))
+    .then(() => runPromise(db, insertBookSQL, titles[1]))
+    .then((book) => console.log(`ID: ${book.lastID} created.`))
+    .then(() => runPromise(db, insertBookSQL, titles[2]))
+    .then((book) => console.log(`ID: ${book.lastID} created.`))
+    .then(() => allPromise(db, selectBookSQL))
+    .then((books) => {
+      books.forEach((book) => {
+        console.log(`ID: ${book.id}, Title: ${book.title}`);
       });
     })
     .then(() => runPromise(db, dropTableSQL))
