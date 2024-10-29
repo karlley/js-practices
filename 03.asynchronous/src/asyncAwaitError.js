@@ -26,7 +26,6 @@ async function main() {
       }
     }),
   );
-
   try {
     const books = await allPromise(db, invalidSelectBookSQL);
     books.forEach((book) => {
@@ -39,7 +38,6 @@ async function main() {
       throw error;
     }
   }
-
   await runPromise(db, dropTableSQL);
   await closePromise(db);
 }
