@@ -13,11 +13,17 @@ import { titles } from "./db/titles.js";
 function main() {
   runPromise(db, createTableSQL)
     .then(() => runPromise(db, insertBookSQL, titles[0]))
-    .then((book) => console.log(`ID: ${book.lastID} created.`))
+    .then((book) => {
+      console.log(`ID: ${book.lastID} created.`);
+    })
     .then(() => runPromise(db, insertBookSQL, titles[1]))
-    .then((book) => console.log(`ID: ${book.lastID} created.`))
+    .then((book) => {
+      console.log(`ID: ${book.lastID} created.`);
+    })
     .then(() => runPromise(db, insertBookSQL, titles[2]))
-    .then((book) => console.log(`ID: ${book.lastID} created.`))
+    .then((book) => {
+      console.log(`ID: ${book.lastID} created.`);
+    })
     .then(() => allPromise(db, selectBookSQL))
     .then((books) => {
       books.forEach((book) => {

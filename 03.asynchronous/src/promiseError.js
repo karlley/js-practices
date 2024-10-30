@@ -13,7 +13,9 @@ import { titles } from "./db/titles.js";
 function main() {
   runPromise(db, createTableSQL)
     .then(() => runPromise(db, invalidInsertBookSQL, titles[0]))
-    .then((book) => console.log(`ID: ${book.lastID} created.`))
+    .then((book) => {
+      console.log(`ID: ${book.lastID} created.`);
+    })
     .catch((error) => {
       if (error.message.includes("SQLITE_ERROR")) {
         console.error(`Insert failed: ${error.message}`);
@@ -22,7 +24,9 @@ function main() {
       }
     })
     .then(() => runPromise(db, invalidInsertBookSQL, titles[1]))
-    .then((book) => console.log(`ID: ${book.lastID} created.`))
+    .then((book) => {
+      console.log(`ID: ${book.lastID} created.`);
+    })
     .catch((error) => {
       if (error.message.includes("SQLITE_ERROR")) {
         console.error(`Insert failed: ${error.message}`);
@@ -31,7 +35,9 @@ function main() {
       }
     })
     .then(() => runPromise(db, invalidInsertBookSQL, titles[2]))
-    .then((book) => console.log(`ID: ${book.lastID} created.`))
+    .then((book) => {
+      console.log(`ID: ${book.lastID} created.`);
+    })
     .catch((error) => {
       if (error.message.includes("SQLITE_ERROR")) {
         console.error(`Insert failed: ${error.message}`);
