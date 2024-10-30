@@ -1,8 +1,8 @@
 export const createTableSQL =
-  "create table books (id integer primary key autoincrement, title text unique)";
-export const insertBookSQL = "insert into books (title) values (?)";
+  "CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT UNIQUE)";
+export const insertBookSQL = "INSERT INTO books (title) VALUES (?)";
 export const invalidInsertBookSQL =
-  "insert into invalidtable (title) values (?)";
-export const selectBookSQL = "select * from books";
-export const invalidSelectBookSQL = "select * from invalidtable";
-export const dropTableSQL = "drop table books";
+  "INSERT INTO invalid_table (title) VALUES (?)";
+export const selectBookSQL = "SELECT * FROM books";
+export const invalidSelectBookSQL = "SELECT * FROM invalid_table";
+export const dropTableSQL = "DROP TABLE books";
