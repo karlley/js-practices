@@ -50,6 +50,7 @@ function main() {
       books.forEach((book) => {
         console.log(`ID: ${book.id}, Title: ${book.title}`);
       });
+      return runPromise(db, dropTableSQL);
     })
     .catch((error) => {
       if (error.message.includes("SQLITE_ERROR")) {
@@ -58,7 +59,6 @@ function main() {
         throw error;
       }
     })
-    .then(() => runPromise(db, dropTableSQL))
     .then(() => closePromise(db));
 }
 

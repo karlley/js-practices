@@ -29,8 +29,8 @@ function main() {
       books.forEach((book) => {
         console.log(`ID: ${book.id}, Title: ${book.title}`);
       });
+      return runPromise(db, dropTableSQL);
     })
-    .then(() => runPromise(db, dropTableSQL))
     .then(() => closePromise(db));
 }
 
