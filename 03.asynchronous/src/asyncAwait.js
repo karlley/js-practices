@@ -12,11 +12,14 @@ import { titles } from "./db/titles.js";
 
 async function main() {
   await runPromise(db, createTableSQL);
-  await Promise.all(
-    titles.map(async (title) => {
-      const book = await runPromise(db, insertBookSQL, [title]);
-      console.log(`ID: ${book.lastID} inserted.`);
-    }),
+  console.log(
+    `ID: ${(await runPromise(db, insertBookSQL, titles[0])).lastID} inserted.`,
+  );
+  console.log(
+    `ID: ${(await runPromise(db, insertBookSQL, titles[1])).lastID} inserted.`,
+  );
+  console.log(
+    `ID: ${(await runPromise(db, insertBookSQL, titles[2])).lastID} inserted.`,
   );
   const books = await allPromise(db, selectBookSQL);
   books.forEach((book) => {

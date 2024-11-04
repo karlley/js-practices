@@ -12,20 +12,39 @@ import { titles } from "./db/titles.js";
 
 async function main() {
   await runPromise(db, createTableSQL);
-  await Promise.all(
-    titles.map(async (title) => {
-      try {
-        const book = await runPromise(db, invalidInsertBookSQL, [title]);
-        console.log(`ID: ${book.lastID} created.`);
-      } catch (error) {
-        if (error.message.includes("SQLITE_ERROR")) {
-          console.error(`Insert failed: ${error.message}`);
-        } else {
-          throw error;
-        }
-      }
-    }),
-  );
+  try {
+    console.log(
+      `ID: ${(await runPromise(db, invalidInsertBookSQL, titles[0])).lastID} inserted.`,
+    );
+  } catch (error) {
+    if (error.message.includes("SQLITE_ERROR")) {
+      console.error(`Insert failed: ${error.message}`);
+    } else {
+      throw error;
+    }
+  }
+  try {
+    console.log(
+      `ID: ${(await runPromise(db, invalidInsertBookSQL, titles[1])).lastID} inserted.`,
+    );
+  } catch (error) {
+    if (error.message.includes("SQLITE_ERROR")) {
+      console.error(`Insert failed: ${error.message}`);
+    } else {
+      throw error;
+    }
+  }
+  try {
+    console.log(
+      `ID: ${(await runPromise(db, invalidInsertBookSQL, titles[2])).lastID} inserted.`,
+    );
+  } catch (error) {
+    if (error.message.includes("SQLITE_ERROR")) {
+      console.error(`Insert failed: ${error.message}`);
+    } else {
+      throw error;
+    }
+  }
   try {
     const books = await allPromise(db, invalidSelectBookSQL);
     books.forEach((book) => {
