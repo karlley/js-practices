@@ -13,28 +13,28 @@ function main() {
   db.run(createTableSQL, () => {
     db.run(invalidInsertBookSQL, titles[0], function (error) {
       if (error) {
-        console.error(`Insert failed: ${error.message}`);
+        console.error(`Insert failed: ${error}`);
       } else {
         console.log(`ID: ${this.lastID} inserted.`);
       }
 
       db.run(invalidInsertBookSQL, titles[1], function (error) {
         if (error) {
-          console.error(`Insert failed: ${error.message}`);
+          console.error(`Insert failed: ${error}`);
         } else {
           console.log(`ID: ${this.lastID} inserted.`);
         }
 
         db.run(invalidInsertBookSQL, titles[2], function (error) {
           if (error) {
-            console.error(`Insert failed: ${error.message}`);
+            console.error(`Insert failed: ${error}`);
           } else {
             console.log(`ID: ${this.lastID} inserted.`);
           }
 
           db.all(invalidSelectBookSQL, (error, books) => {
             if (error) {
-              console.error(`Select failed: ${error.message}`);
+              console.error(`Select failed: ${error}`);
             } else {
               books.forEach((book) => {
                 console.log(`ID: ${book.id}, Title: ${book.title}`);

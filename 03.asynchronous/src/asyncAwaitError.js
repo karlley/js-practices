@@ -17,33 +17,21 @@ async function main() {
       `ID: ${(await runPromise(db, invalidInsertBookSQL, titles[0])).lastID} inserted.`,
     );
   } catch (error) {
-    if (error.message.includes("SQLITE_ERROR")) {
-      console.error(`Insert failed: ${error.message}`);
-    } else {
-      throw error;
-    }
+    console.error(`Insert failed: ${error}`);
   }
   try {
     console.log(
       `ID: ${(await runPromise(db, invalidInsertBookSQL, titles[1])).lastID} inserted.`,
     );
   } catch (error) {
-    if (error.message.includes("SQLITE_ERROR")) {
-      console.error(`Insert failed: ${error.message}`);
-    } else {
-      throw error;
-    }
+    console.error(`Insert failed: ${error}`);
   }
   try {
     console.log(
       `ID: ${(await runPromise(db, invalidInsertBookSQL, titles[2])).lastID} inserted.`,
     );
   } catch (error) {
-    if (error.message.includes("SQLITE_ERROR")) {
-      console.error(`Insert failed: ${error.message}`);
-    } else {
-      throw error;
-    }
+    console.error(`Insert failed: ${error}`);
   }
   try {
     const books = await allPromise(db, invalidSelectBookSQL);
@@ -51,11 +39,7 @@ async function main() {
       console.log(`ID: ${book.id}, Title: ${book.title}`);
     });
   } catch (error) {
-    if (error.message.includes("SQLITE_ERROR")) {
-      console.error(`Select failed: ${error.message}`);
-    } else {
-      throw error;
-    }
+    console.error(`Select failed: ${error}`);
   }
   await runPromise(db, dropTableSQL);
   await closePromise(db);
