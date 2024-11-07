@@ -13,13 +13,10 @@ function main() {
   db.run(createTableSQL, () => {
     db.run(insertBookSQL, titles[0], function () {
       console.log(`ID: ${this.lastID} inserted.`);
-
       db.run(insertBookSQL, titles[1], function () {
         console.log(`ID: ${this.lastID} inserted.`);
-
         db.run(insertBookSQL, titles[2], function () {
           console.log(`ID: ${this.lastID} inserted.`);
-
           db.all(selectBookSQL, (_, books) => {
             books.forEach((book) => {
               console.log(`ID: ${book.id}, Title: ${book.title}`);
