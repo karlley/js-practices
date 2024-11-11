@@ -11,23 +11,29 @@ import {
 import { titles } from "./db/titles.js";
 
 function main() {
+  const ids = [];
   runPromise(db, createTableSQL)
-    .then(() => runPromise(db, insertBookSQL, titles[0]))
-    .then((book) => {
-      console.log(`ID: ${book.lastID} created.`);
+    .then(() => {
+      return runPromise(db, insertBookSQL, titles[0]);
     })
-    .then(() => runPromise(db, insertBookSQL, titles[1]))
-    .then((book) => {
-      console.log(`ID: ${book.lastID} created.`);
+    .then((statement) => {
+      ids.push(statement.lastID);
+      return runPromise(db, insertBookSQL, titles[1]);
     })
-    .then(() => runPromise(db, insertBookSQL, titles[2]))
-    .then((book) => {
-      console.log(`ID: ${book.lastID} created.`);
+    .then((statement) => {
+      ids.push(statement.lastID);
+      return runPromise(db, insertBookSQL, titles[2]);
     })
-    .then(() => allPromise(db, selectBookSQL))
-    .then((books) => {
-      books.forEach((book) => {
-        console.log(`ID: ${book.id}, Title: ${book.title}`);
+    .then((statement) => {
+      ids.push(statement.lastID);
+      ids.forEach((id) => {
+        console.log(`ID: ${id} inserted.`);
+      });
+      return allPromise(db, selectBookSQL);
+    })
+    .then((rows) => {
+      rows.forEach((row) => {
+        console.log(`ID: ${row.id}, Title: ${row.title}`);
       });
       return runPromise(db, dropTableSQL);
     })

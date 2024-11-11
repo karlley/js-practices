@@ -12,35 +12,34 @@ import { titles } from "./db/titles.js";
 
 async function main() {
   await runPromise(db, createTableSQL);
+  const ids = [];
   try {
-    console.log(
-      `ID: ${(await runPromise(db, invalidInsertBookSQL, titles[0])).lastID} inserted.`,
-    );
+    ids.push((await runPromise(db, invalidInsertBookSQL, titles[0])).lastID);
   } catch (error) {
     console.error(`Insert failed: ${error}`);
   }
   try {
-    console.log(
-      `ID: ${(await runPromise(db, invalidInsertBookSQL, titles[1])).lastID} inserted.`,
-    );
+    ids.push((await runPromise(db, invalidInsertBookSQL, titles[1])).lastID);
   } catch (error) {
     console.error(`Insert failed: ${error}`);
   }
   try {
-    console.log(
-      `ID: ${(await runPromise(db, invalidInsertBookSQL, titles[2])).lastID} inserted.`,
-    );
+    ids.push((await runPromise(db, invalidInsertBookSQL, titles[2])).lastID);
   } catch (error) {
     console.error(`Insert failed: ${error}`);
   }
+  ids.forEach((id) => {
+    console.log(`ID: ${id} inserted.`);
+  });
+  let rows = [];
   try {
-    const books = await allPromise(db, invalidSelectBookSQL);
-    books.forEach((book) => {
-      console.log(`ID: ${book.id}, Title: ${book.title}`);
-    });
+    rows = await allPromise(db, invalidSelectBookSQL);
   } catch (error) {
     console.error(`Select failed: ${error}`);
   }
+  rows.forEach((row) => {
+    console.log(`ID: ${row.id}, Title: ${row.title}`);
+  });
   await runPromise(db, dropTableSQL);
   await closePromise(db);
 }

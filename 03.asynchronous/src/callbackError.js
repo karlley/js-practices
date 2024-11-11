@@ -11,24 +11,28 @@ import { titles } from "./db/titles.js";
 
 function main() {
   db.run(createTableSQL, () => {
+    const ids = [];
     db.run(invalidInsertBookSQL, titles[0], function (error) {
       if (error) {
         console.error(`Insert failed: ${error}`);
       } else {
-        console.log(`ID: ${this.lastID} inserted.`);
+        ids.push(this.lastID);
       }
       db.run(invalidInsertBookSQL, titles[1], function (error) {
         if (error) {
           console.error(`Insert failed: ${error}`);
         } else {
-          console.log(`ID: ${this.lastID} inserted.`);
+          ids.push(this.lastID);
         }
         db.run(invalidInsertBookSQL, titles[2], function (error) {
           if (error) {
             console.error(`Insert failed: ${error}`);
           } else {
-            console.log(`ID: ${this.lastID} inserted.`);
+            ids.push(this.lastID);
           }
+          ids.forEach((id) => {
+            console.log(`ID: ${id} inserted.`);
+          });
           db.all(invalidSelectBookSQL, (error, books) => {
             if (error) {
               console.error(`Select failed: ${error}`);

@@ -11,37 +11,49 @@ import {
 import { titles } from "./db/titles.js";
 
 function main() {
+  const ids = [];
   runPromise(db, createTableSQL)
     .then(() => runPromise(db, invalidInsertBookSQL, titles[0]))
-    .then((book) => {
-      console.log(`ID: ${book.lastID} created.`);
+    .catch((error) => {
+      console.error(`Insert failed: ${error}`);
+    })
+    .then((statement) => {
+      if (statement) {
+        ids.push(statement.lastID);
+      }
+      return runPromise(db, invalidInsertBookSQL, titles[1]);
     })
     .catch((error) => {
       console.error(`Insert failed: ${error}`);
     })
-    .then(() => runPromise(db, invalidInsertBookSQL, titles[1]))
-    .then((book) => {
-      console.log(`ID: ${book.lastID} created.`);
+    .then((statement) => {
+      if (statement) {
+        ids.push(statement.lastID);
+      }
+      return runPromise(db, invalidInsertBookSQL, titles[2]);
     })
     .catch((error) => {
       console.error(`Insert failed: ${error}`);
     })
-    .then(() => runPromise(db, invalidInsertBookSQL, titles[2]))
-    .then((book) => {
-      console.log(`ID: ${book.lastID} created.`);
-    })
-    .catch((error) => {
-      console.error(`Insert failed: ${error}`);
-    })
-    .then(() => allPromise(db, invalidSelectBookSQL))
-    .then((books) => {
-      books.forEach((book) => {
-        console.log(`ID: ${book.id}, Title: ${book.title}`);
+    .then((statement) => {
+      if (statement) {
+        ids.push(statement.lastID);
+      }
+      ids.forEach((id) => {
+        console.log(`ID: ${id} inserted.`);
       });
-      return runPromise(db, dropTableSQL);
+      return allPromise(db, invalidSelectBookSQL);
     })
     .catch((error) => {
       console.error(`Select failed: ${error}`);
+    })
+    .then((rows) => {
+      if (rows) {
+        rows.forEach((row) => {
+          console.log(`ID: ${row.id}, Title: ${row.title}`);
+        });
+      }
+      return runPromise(db, dropTableSQL);
     })
     .then(() => closePromise(db));
 }

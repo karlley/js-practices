@@ -11,12 +11,16 @@ import { titles } from "./db/titles.js";
 
 function main() {
   db.run(createTableSQL, () => {
+    const ids = [];
     db.run(insertBookSQL, titles[0], function () {
-      console.log(`ID: ${this.lastID} inserted.`);
+      ids.push(this.lastID);
       db.run(insertBookSQL, titles[1], function () {
-        console.log(`ID: ${this.lastID} inserted.`);
+        ids.push(this.lastID);
         db.run(insertBookSQL, titles[2], function () {
-          console.log(`ID: ${this.lastID} inserted.`);
+          ids.push(this.lastID);
+          ids.forEach((id) => {
+            console.log(`ID: ${id} inserted.`);
+          });
           db.all(selectBookSQL, (_, books) => {
             books.forEach((book) => {
               console.log(`ID: ${book.id}, Title: ${book.title}`);
