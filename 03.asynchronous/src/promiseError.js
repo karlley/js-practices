@@ -3,17 +3,17 @@
 import { db } from "./db/database.js";
 import { runPromise, allPromise, closePromise } from "./db/promiseFunctions.js";
 import {
-  createTableSQL,
-  invalidInsertBookSQL,
-  invalidSelectBookSQL,
-  dropTableSQL,
+  createTableQuery,
+  invalidInsertQuery,
+  invalidSelectQuery,
+  dropTableQuery,
 } from "./db/queries.js";
 import { titles } from "./db/titles.js";
 
 function main() {
   const ids = [];
-  runPromise(db, createTableSQL)
-    .then(() => runPromise(db, invalidInsertBookSQL, titles[0]))
+  runPromise(db, createTableQuery)
+    .then(() => runPromise(db, invalidInsertQuery, titles[0]))
     .catch((error) => {
       console.error(`Insert failed: ${error}`);
     })
@@ -21,7 +21,7 @@ function main() {
       if (statement) {
         ids.push(statement.lastID);
       }
-      return runPromise(db, invalidInsertBookSQL, titles[1]);
+      return runPromise(db, invalidInsertQuery, titles[1]);
     })
     .catch((error) => {
       console.error(`Insert failed: ${error}`);
@@ -30,7 +30,7 @@ function main() {
       if (statement) {
         ids.push(statement.lastID);
       }
-      return runPromise(db, invalidInsertBookSQL, titles[2]);
+      return runPromise(db, invalidInsertQuery, titles[2]);
     })
     .catch((error) => {
       console.error(`Insert failed: ${error}`);
@@ -42,7 +42,7 @@ function main() {
       ids.forEach((id) => {
         console.log(`ID: ${id} inserted.`);
       });
-      return allPromise(db, invalidSelectBookSQL);
+      return allPromise(db, invalidSelectQuery);
     })
     .catch((error) => {
       console.error(`Select failed: ${error}`);
@@ -53,7 +53,7 @@ function main() {
           console.log(`ID: ${row.id}, Title: ${row.title}`);
         });
       }
-      return runPromise(db, dropTableSQL);
+      return runPromise(db, dropTableQuery);
     })
     .then(() => closePromise(db));
 }

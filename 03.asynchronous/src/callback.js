@@ -2,30 +2,30 @@
 
 import { db } from "./db/database.js";
 import {
-  createTableSQL,
-  insertBookSQL,
-  selectBookSQL,
-  dropTableSQL,
+  createTableQuery,
+  insertQuery,
+  selectQuery,
+  dropTableQuery,
 } from "./db/queries.js";
 import { titles } from "./db/titles.js";
 
 function main() {
-  db.run(createTableSQL, () => {
+  db.run(createTableQuery, () => {
     const ids = [];
-    db.run(insertBookSQL, titles[0], function () {
+    db.run(insertQuery, titles[0], function () {
       ids.push(this.lastID);
-      db.run(insertBookSQL, titles[1], function () {
+      db.run(insertQuery, titles[1], function () {
         ids.push(this.lastID);
-        db.run(insertBookSQL, titles[2], function () {
+        db.run(insertQuery, titles[2], function () {
           ids.push(this.lastID);
           ids.forEach((id) => {
             console.log(`ID: ${id} inserted.`);
           });
-          db.all(selectBookSQL, (_, books) => {
+          db.all(selectQuery, (_, books) => {
             books.forEach((book) => {
               console.log(`ID: ${book.id}, Title: ${book.title}`);
             });
-            db.run(dropTableSQL, () => {
+            db.run(dropTableQuery, () => {
               db.close();
             });
           });

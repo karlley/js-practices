@@ -3,39 +3,39 @@
 import { db } from "./db/database.js";
 import { runPromise, allPromise, closePromise } from "./db/promiseFunctions.js";
 import {
-  createTableSQL,
-  insertBookSQL,
-  selectBookSQL,
-  dropTableSQL,
+  createTableQuery,
+  insertQuery,
+  selectQuery,
+  dropTableQuery,
 } from "./db/queries.js";
 import { titles } from "./db/titles.js";
 
 function main() {
   const ids = [];
-  runPromise(db, createTableSQL)
+  runPromise(db, createTableQuery)
     .then(() => {
-      return runPromise(db, insertBookSQL, titles[0]);
+      return runPromise(db, insertQuery, titles[0]);
     })
     .then((statement) => {
       ids.push(statement.lastID);
-      return runPromise(db, insertBookSQL, titles[1]);
+      return runPromise(db, insertQuery, titles[1]);
     })
     .then((statement) => {
       ids.push(statement.lastID);
-      return runPromise(db, insertBookSQL, titles[2]);
+      return runPromise(db, insertQuery, titles[2]);
     })
     .then((statement) => {
       ids.push(statement.lastID);
       ids.forEach((id) => {
         console.log(`ID: ${id} inserted.`);
       });
-      return allPromise(db, selectBookSQL);
+      return allPromise(db, selectQuery);
     })
     .then((rows) => {
       rows.forEach((row) => {
         console.log(`ID: ${row.id}, Title: ${row.title}`);
       });
-      return runPromise(db, dropTableSQL);
+      return runPromise(db, dropTableQuery);
     })
     .then(() => closePromise(db));
 }
