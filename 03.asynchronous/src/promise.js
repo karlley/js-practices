@@ -13,9 +13,7 @@ import { titles } from "./db/titles.js";
 function main() {
   const ids = [];
   runPromise(db, createTableQuery)
-    .then(() => {
-      return runPromise(db, insertQuery, titles[0]);
-    })
+    .then(() => runPromise(db, insertQuery, titles[0]))
     .then((statement) => {
       ids.push(statement.lastID);
       return runPromise(db, insertQuery, titles[1]);
