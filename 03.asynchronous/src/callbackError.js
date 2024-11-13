@@ -14,19 +14,19 @@ function main() {
     const ids = [];
     db.run(invalidInsertQuery, titles[0], function (error) {
       if (error) {
-        console.error(`Insert failed: ${error}`);
+        console.error(`Insert failed: ${error.message}`);
       } else {
         ids.push(this.lastID);
       }
       db.run(invalidInsertQuery, titles[1], function (error) {
         if (error) {
-          console.error(`Insert failed: ${error}`);
+          console.error(`Insert failed: ${error.message}`);
         } else {
           ids.push(this.lastID);
         }
         db.run(invalidInsertQuery, titles[2], function (error) {
           if (error) {
-            console.error(`Insert failed: ${error}`);
+            console.error(`Insert failed: ${error.message}`);
           } else {
             ids.push(this.lastID);
           }
@@ -35,7 +35,7 @@ function main() {
           });
           db.all(invalidSelectQuery, (error, books) => {
             if (error) {
-              console.error(`Select failed: ${error}`);
+              console.error(`Select failed: ${error.message}`);
             } else {
               books.forEach((book) => {
                 console.log(`ID: ${book.id}, Title: ${book.title}`);

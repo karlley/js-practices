@@ -15,7 +15,7 @@ function main() {
   runPromise(db, createTableQuery)
     .then(() => runPromise(db, invalidInsertQuery, titles[0]))
     .catch((error) => {
-      console.error(`Insert failed: ${error}`);
+      console.error(`Insert failed: ${error.message}`);
     })
     .then((statement) => {
       if (statement) {
@@ -24,7 +24,7 @@ function main() {
       return runPromise(db, invalidInsertQuery, titles[1]);
     })
     .catch((error) => {
-      console.error(`Insert failed: ${error}`);
+      console.error(`Insert failed: ${error.message}`);
     })
     .then((statement) => {
       if (statement) {
@@ -33,7 +33,7 @@ function main() {
       return runPromise(db, invalidInsertQuery, titles[2]);
     })
     .catch((error) => {
-      console.error(`Insert failed: ${error}`);
+      console.error(`Insert failed: ${error.message}`);
     })
     .then((statement) => {
       if (statement) {
@@ -45,7 +45,7 @@ function main() {
       return allPromise(db, invalidSelectQuery);
     })
     .catch((error) => {
-      console.error(`Select failed: ${error}`);
+      console.error(`Select failed: ${error.message}`);
     })
     .then((rows) => {
       if (rows) {

@@ -16,17 +16,17 @@ async function main() {
   try {
     ids.push((await runPromise(db, invalidInsertQuery, titles[0])).lastID);
   } catch (error) {
-    console.error(`Insert failed: ${error}`);
+    console.error(`Insert failed: ${error.message}`);
   }
   try {
     ids.push((await runPromise(db, invalidInsertQuery, titles[1])).lastID);
   } catch (error) {
-    console.error(`Insert failed: ${error}`);
+    console.error(`Insert failed: ${error.message}`);
   }
   try {
     ids.push((await runPromise(db, invalidInsertQuery, titles[2])).lastID);
   } catch (error) {
-    console.error(`Insert failed: ${error}`);
+    console.error(`Insert failed: ${error.message}`);
   }
   ids.forEach((id) => {
     console.log(`ID: ${id} inserted.`);
@@ -35,7 +35,7 @@ async function main() {
   try {
     rows = await allPromise(db, invalidSelectQuery);
   } catch (error) {
-    console.error(`Select failed: ${error}`);
+    console.error(`Select failed: ${error.message}`);
   }
   rows.forEach((row) => {
     console.log(`ID: ${row.id}, Title: ${row.title}`);
