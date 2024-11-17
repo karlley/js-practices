@@ -14,38 +14,32 @@ function main() {
   const ids = [];
   runPromise(db, createTableQuery)
     .then(() => runPromise(db, invalidInsertQuery, titles[0]))
-    .catch((error) => {
-      console.error(`Insert failed: ${error.message}`);
-    })
     .then((statement) => {
-      if (statement) {
-        ids.push(statement.lastID);
-      }
+      ids.push(statement.lastID);
       return runPromise(db, invalidInsertQuery, titles[1]);
     })
     .catch((error) => {
       console.error(`Insert failed: ${error.message}`);
+      return runPromise(db, invalidInsertQuery, titles[1]);
     })
     .then((statement) => {
-      if (statement) {
-        ids.push(statement.lastID);
-      }
+      ids.push(statement.lastID);
       return runPromise(db, invalidInsertQuery, titles[2]);
     })
     .catch((error) => {
       console.error(`Insert failed: ${error.message}`);
+      return runPromise(db, invalidInsertQuery, titles[2]);
     })
     .then((statement) => {
-      if (statement) {
-        ids.push(statement.lastID);
-      }
+      ids.push(statement.lastID);
       ids.forEach((id) => {
         console.log(`ID: ${id} inserted.`);
       });
       return allPromise(db, invalidSelectQuery);
     })
     .catch((error) => {
-      console.error(`Select failed: ${error.message}`);
+      console.error(`Insert failed: ${error.message}`);
+      return allPromise(db, invalidSelectQuery);
     })
     .then((rows) => {
       if (rows) {
@@ -53,6 +47,10 @@ function main() {
           console.log(`ID: ${row.id}, Title: ${row.title}`);
         });
       }
+      return runPromise(db, dropTableQuery);
+    })
+    .catch((error) => {
+      console.error(`Select failed: ${error.message}`);
       return runPromise(db, dropTableQuery);
     })
     .then(() => closePromise(db));
