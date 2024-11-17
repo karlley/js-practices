@@ -13,20 +13,13 @@ import { titles } from "./db/titles.js";
 async function main() {
   await runPromise(db, createTableQuery);
   const ids = [];
-  try {
-    ids.push((await runPromise(db, invalidInsertQuery, titles[0])).lastID);
-  } catch (error) {
-    console.error(`Insert failed: ${error.message}`);
-  }
-  try {
-    ids.push((await runPromise(db, invalidInsertQuery, titles[1])).lastID);
-  } catch (error) {
-    console.error(`Insert failed: ${error.message}`);
-  }
-  try {
-    ids.push((await runPromise(db, invalidInsertQuery, titles[2])).lastID);
-  } catch (error) {
-    console.error(`Insert failed: ${error.message}`);
+  for (const title of titles) {
+    try {
+      const statement = await runPromise(db, invalidInsertQuery, title);
+      ids.push(statement.lastID);
+    } catch (error) {
+      console.error(`Insert failed: ${error.message}`);
+    }
   }
   ids.forEach((id) => {
     console.log(`ID: ${id} inserted.`);

@@ -13,9 +13,10 @@ import { titles } from "./db/titles.js";
 async function main() {
   await runPromise(db, createTableQuery);
   const ids = [];
-  ids.push((await runPromise(db, insertQuery, titles[0])).lastID);
-  ids.push((await runPromise(db, insertQuery, titles[1])).lastID);
-  ids.push((await runPromise(db, insertQuery, titles[2])).lastID);
+  for (const title of titles) {
+    const statement = await runPromise(db, insertQuery, title);
+    ids.push(statement.lastID);
+  }
   ids.forEach((id) => {
     console.log(`ID: ${id} inserted.`);
   });
