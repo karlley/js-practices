@@ -42,11 +42,9 @@ function main() {
       return allPromise(db, invalidSelectQuery);
     })
     .then((rows) => {
-      if (rows) {
-        rows.forEach((row) => {
-          console.log(`ID: ${row.id}, Title: ${row.title}`);
-        });
-      }
+      rows.forEach((row) => {
+        console.log(`ID: ${row.id}, Title: ${row.title}`);
+      });
       return runPromise(db, dropTableQuery);
     })
     .catch((error) => {
