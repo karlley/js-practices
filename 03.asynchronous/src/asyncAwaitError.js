@@ -13,13 +13,15 @@ import { titles } from "./db/titles.js";
 async function main() {
   await runPromise(db, createTableQuery);
   const ids = [];
-  const errors = [];
   for (const title of titles) {
+    let statement = null;
     try {
-      const statement = await runPromise(db, invalidInsertQuery, title);
-      ids.push(statement.lastID);
+      statement = await runPromise(db, invalidInsertQuery, title);
     } catch (error) {
-      errors.push(`Insert failed: ${error.message}`);
+      console.error(`Insert failed: ${error.message}`);
+    }
+    if (statement) {
+      ids.push(statement.lastID);
     }
   }
   ids.forEach((id) => {
@@ -29,21 +31,13 @@ async function main() {
   try {
     rows = await allPromise(db, invalidSelectQuery);
   } catch (error) {
-    errors.push(`Select failed: ${error.message}`);
-  }
-  if (errors.length > 0) {
-    throw new Error(errors.join("\n"));
+    console.error(`Select failed: ${error.message}`);
   }
   rows.forEach((row) => {
     console.log(`ID: ${row.id}, Title: ${row.title}`);
   });
-}
-
-try {
-  await main();
-} catch (error) {
-  console.error(error.message);
-} finally {
   await runPromise(db, dropTableQuery);
   await closePromise(db);
 }
+
+await main();
