@@ -14,7 +14,7 @@ async function main() {
   await runPromise(db, createTableQuery);
   const ids = [];
   for (const title of titles) {
-    let statement = null;
+    let statement;
     try {
       statement = await runPromise(db, invalidInsertQuery, title);
     } catch (error) {
@@ -27,15 +27,17 @@ async function main() {
   ids.forEach((id) => {
     console.log(`ID: ${id} inserted.`);
   });
-  let rows = [];
+  let rows;
   try {
     rows = await allPromise(db, invalidSelectQuery);
   } catch (error) {
     console.error(`Select failed: ${error.message}`);
   }
-  rows.forEach((row) => {
-    console.log(`ID: ${row.id}, Title: ${row.title}`);
-  });
+  if (rows) {
+    rows.forEach((row) => {
+      console.log(`ID: ${row.id}, Title: ${row.title}`);
+    });
+  }
   await runPromise(db, dropTableQuery);
   await closePromise(db);
 }
